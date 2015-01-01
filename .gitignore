@@ -6,3 +6,5 @@ temp/*
 build/working/*
 build/*.nupkg
 **/nuget.exe
+
+artefacts/*
