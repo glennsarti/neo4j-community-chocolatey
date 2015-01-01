@@ -11,8 +11,10 @@ try {
   $packageParameters = $env:chocolateyPackageParameters;
   
   # Default the values
-  $port = "7474";
+  # $port = 7474
   $InstallDir = "$($Env:SystemDrive)\Neo4jCommunity";
+  $ImportNeoProperties = ""
+  $ImportNeoServerProperties = ""
   
   # Now, let’s parse the packageParameters using good old regular expression
   if($packageParameters) {
@@ -29,12 +31,12 @@ try {
         }
       }     
   
-      if($arguments.ContainsKey("Port")) {
-          Write-Host "Port Argument Found";
-          $port = $arguments["Port"];
-      }  
+#       if($arguments.ContainsKey("Port")) {
+#           Write-Host "Port Argument Found";
+#           $port = $arguments["Port"];
+#       }  
   
-      if($arguments.ContainsKey("Edition")) {
+      if($arguments.ContainsKey("Install")) {
           Write-Host "Install Argument Found";
           $InstallDir = $arguments["Install"];
       }
@@ -42,7 +44,14 @@ try {
       Write-Host "No Package Parameters Passed in";
   }
   
-  $silentArgs = "/S /Port=" + $port + " /install=" + $InstallDir;  
+  #$silentArgs = "/Port=" + $port + " /install=" + $InstallDir;  
+  $silentArgs = "/install=" + $InstallDir
+  if ($ImportNeoProperties -ne "") {
+    $silentArgs += " /importneoproperties=" + $ImportNeoProperties
+  }
+  if ($ImportNeoServerProperties -ne "") {
+    $silentArgs += " /importneoserverproperties=" + $ImportNeoServerProperties
+  }
   Write-Host "This would be the Chocolatey Silent Arguments: $silentArgs"
 
   # Install Neo4j
@@ -51,6 +60,9 @@ try {
   # Set the Home Environment Variable
   $neoHome = "$($InstallDir)\neo4j-community-2.1.6"
   Install-ChocolateyEnvironmentVariable "NEO4J_HOME" "$neoHome" "Machine"
+  
+  # TODO Preconfigure the Neo4j Server config prior to service start
+  # Use $ImportNeoServerProperties and $ImportNeoProperties
   
   # Install the Neo4j Service
   $InstallBatch = "$($neoHome)\bin\Neo4jInstaller.bat"
