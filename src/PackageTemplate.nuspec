@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>neo4jcommunity</id>
+    <version>2.1.6</version>
+    <title>Neo4j Community Edition</title>
+    <authors>Emil Eifrem, Johan Svensson</authors><-- App Owners -->
+    <owners>Glenn Sarti</owners> <!-- Package Maintainers -->
+    <licenseUrl>http://neo4j.com/open-source-project/</licenseUrl>
+    <projectUrl>http://neo4j.com/</projectUrl>
+    <iconUrl>https://avatars3.githubusercontent.com/u/201120?v=3&s=200</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Neo4j is the world’s leading Graph Database. It is a high performance graph store with all the features expected of a mature and robust database, like a friendly query language and ACID transactions. The programmer works with a flexible network structure of nodes and relationships rather than static tables?—?yet enjoys all the benefits of enterprise-quality database. For many applications, Neo4j offers orders of magnitude performance benefits compared to relational DBs.</description>
+    <summary>Neo4j is a high performance graph store.  It is scalable, highly -performand and open source.</summary>
+    <tags>neo4j graph community database nosql</tags>
+  </metadata>
+</package>
