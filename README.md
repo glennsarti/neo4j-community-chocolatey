@@ -4,7 +4,7 @@ neo4j-community-chocolatey
 ## What is this?
 This project is a Chocolatey package to install Neo4j Community Edition onto a Windows based computer.
 
-The chocolate package can be found at *insert link here*
+The chocolate package can be found at https://chocolatey.org/packages/neo4jcommunity
 
 https://chocolatey.org
 
