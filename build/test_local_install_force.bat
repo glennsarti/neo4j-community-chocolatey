@@ -9,4 +9,4 @@ SET PKGPARAMS=
 IF NOT [%1] == [] SET PKGPARAMS=-packageParameters "%*"
 
 REM ECHO Installing...
-choco install neo4jcommunity -source "%THISDIR%\..\artefacts" -debug %PKGPARAMS%
+choco install neo4jcommunity -Force -source "%THISDIR%\..\artefacts" -debug %PKGPARAMS%
