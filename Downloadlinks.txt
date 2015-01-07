@@ -1,0 +1,10 @@
+Handy links for downloading the install files
+
+Always get the ZIP!
+
+http://neo4j.com/artifact.php?name=neo4j-community_windows_2_1_6.zip
+
+http://neo4j.com/download-thanks/?edition=community&release=2.1.6&architecture=x64
+
+Latest
+http://neo4j.com/download-thanks/?edition=community&architecture=x64
