@@ -9,7 +9,7 @@ try {
 
   # Default the values
   # $port = 7474
-  $InstallDir = "$($Env:SystemDrive)\Neo4jCommunity";
+  $InstallDir = Get-BinRoot
   $ImportNeoProperties = ""
   $ImportNeoServerProperties = ""
   
@@ -57,7 +57,7 @@ try {
   if ($ImportNeoServerProperties -ne "") {
     $silentArgs += " /importneoserverproperties:" + $ImportNeoServerProperties
   }
-  Write-Host "This would be the Chocolatey Silent Arguments: $silentArgs"
+  Write-Debug "This would be the Chocolatey Silent Arguments: $silentArgs"
 
   # Sanity Checks
   If ($ImportNeoProperties -ne "") {
@@ -87,12 +87,10 @@ try {
   # Install the Neo4j Service
   $InstallBatch = "$($neoHome)\bin\Neo4jInstaller.bat"
   if (!(Test-Path $InstallBatch)) { throw "Could not find the Neo4j Installer Batch file at $InstallBatch" }
-  $RefreshEnv = "$($Env:ChocolateyInstall)\bin\RefreshEnv.cmd"
-  if (!(Test-Path $RefreshEnv)) { throw "Could not find the RefreshEnv Batch file at $RefreshEnv" }
   
   # Need to use a new environment as the NEO4J_HOME may not have been set correctly
   $args = "install"
-  $results = (Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow -UseNewEnvironment)
+  Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow -UseNewEnvironment | Out-Null
 
   # Should I put this in?
   # If NoStartService is set...Stop the Service
