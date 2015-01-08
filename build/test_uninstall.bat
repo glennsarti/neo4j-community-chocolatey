@@ -6,4 +6,4 @@ SET THISDIR=%~dp0
 IF %THISDIR:~-1%==\ SET THISDIR=%THISDIR:~0,-1%
 
 ECHO Uninstalling...
-CUNINST neo4jcommunity -debug
+choco uninstall neo4j-community -debug

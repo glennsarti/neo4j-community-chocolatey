@@ -4,7 +4,7 @@ neo4j-community-chocolatey
 ## What is this?
 This project is a Chocolatey package to install Neo4j Community Edition onto a Windows based computer.
 
-The chocolate package can be found at https://chocolatey.org/packages/neo4jcommunity
+The chocolate package can be found at https://chocolatey.org/packages/neo4j-community
 
 https://chocolatey.org
 
@@ -15,7 +15,7 @@ http://neo4j.com/
 2. Install OpenJDK 7 or Oracle Java 7 http://neo4j.com/docs/stable/deployment-requirements.html#_software
 3. Install this package
 ```powershell
-choco install neo4jcommunity
+choco install neo4j-community
 ```
 4. Open a browser to http://localhost:7474
 
@@ -25,7 +25,7 @@ The package supports the following parameters;
 ```
 /Install:<Install Path>
 ```
-Installs Neo4j to the specified directory.  The default is to install to `%SYSTEMDRIVE%:\Neo4jCommunity` which is typically `C:\Neo4jCommunity`
+Installs Neo4j to the specified directory.  The default is to install to `<Chocolatey Bin Root>\Neo4jCommunity` which is typically `C:\tools\Neo4jCommunity`
 
 ```
 /ImportNeoProperties:<Path to file>
@@ -39,6 +39,6 @@ Copies the file specified to `%NEO4J_HOME%\conf\neo4j-server.properties`.  This 
 
 Example usage;
 ```powershell
-choco install neo4jcommunity -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
+choco install neo4j-community -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
 ```
 This command will install Neo4j to `C:\Apps\Neo`, import the *neo4j.properties* file from `C:\Config\MyNeoProperites.txt` and the *neo4j-server.properties* file from `C:\Config\MyNeoServerProperites.txt`

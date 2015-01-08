@@ -28,6 +28,6 @@ ECHO Using package version %PKGVERSION%
 IF NOT [%PKGVERSION%] == [] SET PKGVERSION=-Version "%PKGVERSION%"
 
 ECHO Run Nuget Pack
-"nuget.exe" pack "%SRC%\PackageTemplate.nuspec" -NonInteractive %PKGVERSION% -NoPackageAnalysis -OutputDirectory %ARTEFACTS%
+"nuget.exe" pack "%SRC%\PackageTemplate.nuspec" -NonInteractive %PKGVERSION% -NoPackageAnalysis -OutputDirectory "%ARTEFACTS%"
 
 EXIT /B %ERRORLEVEL%
