@@ -8,3 +8,6 @@ http://neo4j.com/download-thanks/?edition=community&release=2.1.6&architecture=x
 
 Latest
 http://neo4j.com/download-thanks/?edition=community&architecture=x64
+
+Beta release of 2.2
+http://neo4j.com/download-thanks/?edition=community&release=2.2.0-M02&architecture=x64

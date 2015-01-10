@@ -10,6 +10,7 @@ try {
   # Default the values
   # $port = 7474
   $InstallDir = Get-BinRoot
+  $InstallDir = Join-Path -Path $InstallDir -ChildPath $PackageName
   $ImportNeoProperties = ""
   $ImportNeoServerProperties = ""
   
