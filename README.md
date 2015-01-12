@@ -5,7 +5,7 @@ This project is a collection Chocolatey packages to install Neo4j Community Edit
 ### neo4j-community
 This package installs the Neo4j Server Community Edition
 
-[Source Code](neo4j-community/README.me)
+[Source Code](neo4j-community/)
 
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-community)
 
