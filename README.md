@@ -10,6 +10,14 @@ This package installs the Neo4j Server Community Edition
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-community)
 
 
+### neo4j-community-beta
+This package installs the latest **BETA** Neo4j Server Community Edition
+
+[Source Code](neo4j-community-beta/)
+
+[Chocolatey Package](https://chocolatey.org/packages/neo4j-community-beta)
+
+
 ### Links
 https://chocolatey.org
 
