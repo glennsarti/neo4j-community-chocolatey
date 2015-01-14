@@ -8,11 +8,11 @@ try {
   $packageParameters = $env:chocolateyPackageParameters;
 
   # Default the values
-  # $port = 7474
   $InstallDir = Get-BinRoot
   $InstallDir = Join-Path -Path $InstallDir -ChildPath $PackageName
   $ImportNeoProperties = ""
   $ImportNeoServerProperties = ""
+  $ImportServiceProperties = ""
   
   # Now, let’s parse the packageParameters using good old regular expression
   if($packageParameters) {
@@ -47,6 +47,11 @@ try {
           Write-Host "ImportNeoServerProperties Argument Found";
           $ImportNeoServerProperties = $arguments["importneoserverproperties"];
       }
+
+      if($arguments.ContainsKey("importserviceproperties")) {
+          Write-Host "ImportServiceProperties Argument Found";
+          $ImportServiceProperties = $arguments["importserviceproperties"];
+      }
   } else {
       Write-Host "No Package Parameters Passed in";
   }
@@ -58,6 +63,9 @@ try {
   if ($ImportNeoServerProperties -ne "") {
     $silentArgs += " /importneoserverproperties:" + $ImportNeoServerProperties
   }
+  if ($ImportServiceProperties -ne "") {
+    $silentArgs += " /importserviceproperties:" + $ImportServiceProperties
+  }
   Write-Debug "This would be the Chocolatey Silent Arguments: $silentArgs"
 
   # Sanity Checks
@@ -67,9 +75,12 @@ try {
   If ($ImportNeoServerProperties -ne "") {
     If (!(Test-Path -Path $ImportNeoServerProperties)) { Throw "Could not find the NeoServerProperties file to import. $ImportNeoServerProperties" }     
   }
+  If ($ImportServiceProperties -ne "") {
+    If (!(Test-Path -Path $ImportServiceProperties)) { Throw "Could not find the ServiceProperties file to import. $ImportServiceProperties" }     
+  }
 
   # Install Neo4j
-  Install-ChocolateyZipPackage $PackageName 'http://neo4j.com/artifact.php?name=neo4j-community-2.1.6-windows.zip' $InstallDir
+  Install-ChocolateyZipPackage -PackageName $PackageName -URL 'http://neo4j.com/artifact.php?name=neo4j-community-2.1.6-windows.zip' -UnzipLocation $InstallDir -CheckSum '25cf8ed7ede030e2afe5f37ca91fea5f' -CheckSumType 'md5'
 
   # Set the Home Environment Variable
   $neoHome = "$($InstallDir)\neo4j-community-2.1.6"
@@ -84,6 +95,10 @@ try {
     Write-Host "Importing the neo4j-server.properties from  $ImportNeoServerProperties"
     [void] (Copy-Item -Path $ImportNeoServerProperties -Destination "$($neoHome)\conf\neo4j-server.properties" -Force -Confirm:$false)
   }
+  If ($ImportServiceProperties -ne "") {
+    Write-Host "Importing the neo4j-wrapper.conf from  $ImportServiceProperties"
+    [void] (Copy-Item -Path $ImportServiceProperties -Destination "$($neoHome)\conf\neo4j-wrapper.conf" -Force -Confirm:$false)
+  }
   
   # Install the Neo4j Service
   $InstallBatch = "$($neoHome)\bin\Neo4jInstaller.bat"
@@ -92,10 +107,6 @@ try {
   # Need to use a new environment as the NEO4J_HOME may not have been set correctly
   $args = "install"
   Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow -UseNewEnvironment | Out-Null
-
-  # Should I put this in?
-  # If NoStartService is set...Stop the Service
-  #[void](Get-Service 'Neo4j-Server' | Stop-Service -Force)
 
   Write-ChocolateySuccess $PackageName
 } catch {

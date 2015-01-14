@@ -19,6 +19,7 @@ Note - This chocolatey package is not created or maintained by Neo4j, however th
 `/Install:<Install Path>`
 `/ImportNeoProperties:<Path to file>`
 `/ImportNeoServerProperties:<Path to file>`
+`/ImportServiceProperties:<Path to file>`
 
 e.g. `choco install neo4j-community -packageParameters "/Install:C:\Apps\Neo"`
 

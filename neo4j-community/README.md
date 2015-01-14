@@ -1,4 +1,4 @@
-neo4j-community-chocolatey
+neo4j-community
 ==========================
 
 ## What is this?
@@ -36,6 +36,11 @@ Copies the file specified to `%NEO4J_HOME%\conf\neo4j.properties`.  This is a qu
 /ImportNeoServerProperties:<Path to file>
 ```
 Copies the file specified to `%NEO4J_HOME%\conf\neo4j-server.properties`.  This is a quick way to configure the Neo4j server prior to service start.  Information about the configuration file can be found at http://neo4j.com/docs/stable/server-performance.html
+
+```
+/ImportServiceProperties:<Path to file>
+```
+Copies the file specified to `%NEO4J_HOME%\conf\neo4j-wrapper.conf`.  This is a quick way to configure the Neo4j Windows Service prior to service start.  Information about the configuration file can be found at http://neo4j.com/docs/stable/server-performance.html
 
 Example usage;
 ```powershell
