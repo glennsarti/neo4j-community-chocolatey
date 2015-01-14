@@ -10,5 +10,5 @@ IF [%PKGNAME%] == [] (
   ECHO Missing package name
 ) ELSE (
   ECHO Uninstalling %PKGNAME% ...
-  choco uninstall neo4j-community -debug
+  choco uninstall %PKGNAME% -debug -source "%THISDIR%\..\artefacts"
 )
