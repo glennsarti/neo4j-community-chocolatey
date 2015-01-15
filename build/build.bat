@@ -15,32 +15,34 @@ IF [%PKGNAME%] == [] (
   EXIT /B 255
 )
 
-SET SRC=%THISDIR%\..\%PKGNAME%
+REM Clearout the artefacts dir except if NOCLEAN is specified
 SET ARTEFACTS=%THISDIR%\..\artefacts
+IF NOT [%2] == [NOCLEAN] (
+  ECHO Cleaning the artefact directory
+  RD /S /Q "%ARTEFACTS%" > NUL
+)
+MKDIR "%ARTEFACTS%" 2> NUL
+
+REM If the package name is CLEANONLY then exit with success.  This is just used to clean the artefacts out.  Useful in batch build operations
+IF [%PKGNAME%] == [CLEANONLY] (
+  EXIT /B 0
+)
+
+REM Sanity checks...
+SET SRC=%THISDIR%\..\%PKGNAME%
 
 IF NOT EXIST "%SRC%\PackageTemplate.nuspec" (
   ECHO Package %SRC%\PackageTemplate.nuspec does not exist
   EXIT /B 255
 )
 
-
 PUSHD
 CD /D %THISDIR%
 
-ECHO Cleaning the artefact directory
-RD /S /Q "%ARTEFACTS%" > NUL
-MKDIR "%ARTEFACTS%"
-
-ECHO Getting the package version from various sources
-SET PKGVERSION=
-IF NOT [%2] == [] SET PKGVERSION=%2
-IF NOT [%APPVEYOR_BUILD_VERSION%] == [] SET PKGVERSION=%APPVEYOR_BUILD_VERSION%
-ECHO Using package version %PKGVERSION%
-
-IF NOT [%PKGVERSION%] == [] SET PKGVERSION=-Version "%PKGVERSION%"
-
+REM Start the build process...
+REM Package version ALWAYS comes from the nuspec file
 ECHO Run Nuget Pack for "%PKGNAME%\PackageTemplate.nuspec"
-"nuget.exe" pack "%SRC%\PackageTemplate.nuspec" -NonInteractive %PKGVERSION% -NoPackageAnalysis -OutputDirectory "%ARTEFACTS%"
+"nuget.exe" pack "%SRC%\PackageTemplate.nuspec" -NonInteractive -NoPackageAnalysis -OutputDirectory "%ARTEFACTS%"
 
 POPD
 
