@@ -11,9 +11,7 @@ try {
   }
   if ($neoHome -eq '') { throw "Could not find the Neo4jHome directory" }
 
-  $InstallDir = "$($neoHome)\lib"
-  
-  $TempDir = "$($Env:Temp)\opencsvtemp"
+  $InstallDir = "$($neoHome)\lib"  
   if (Test-Path -Path $TempDir) {
     Remove-Item -Path $TempDir -Force -Recurse -Confirm:$false | Out-Null
   }
