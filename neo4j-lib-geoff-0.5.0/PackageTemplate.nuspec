@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>neo4j-lib-geoff</id>
+    <version>0.5.0</version>
+    <title>Neo4j Library - GEOFF</title>
+    <authors>Nigel Small</authors><!-- App Owners -->
+    <owners>Glenn Sarti</owners> <!-- Package Maintainers -->
+    <licenseUrl>http://neo4j.com/open-source-project/</licenseUrl>
+    <projectUrl>https://github.com/neo4j-contrib/neo4j-geoff</projectUrl>
+    <iconUrl><![CDATA[ https://avatars3.githubusercontent.com/u/201120?v=3&s=200 ]]></iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description><![CDATA[ This package installs the GEOFF java library into an installed Neo4j Graph Database Server.    
+
+The neo4j-geoff project provides a core Geoff library plus a Neo4j server plugin, enabling usage via the RESTful web service interface
+
+Full information is available at the pacakge project site https://github.com/glennsarti/neo4j-community-chocolatey    
+    ]]></description>
+    <summary>The neo4j-geoff project provides a core Geoff library plus a Neo4j server plugin, enabling usage via the RESTful web service interface</summary>
+    <releaseNotes>Full list of changes are available on GitHub; https://github.com/glennsarti/neo4j-community-chocolatey</releaseNotes>
+    <tags>neo4j graph community database nosql library geoff</tags>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

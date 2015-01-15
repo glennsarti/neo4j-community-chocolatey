@@ -20,6 +20,30 @@ This package installs the latest **BETA** Neo4j Server Community Edition
 
 ## Libraries
 
+### neo4j-lib-geoff
+This package installs the GEOFF library
+
+[Source Code - 0.5.0](neo4j-lib-geoff-0.5.0/)
+
+[Chocolatey Package](https://chocolatey.org/packages/neo4j-lib-geoff)
+
+
+### neo4j-lib-shelltools
+This package installs the Shell Tools library
+
+[Source Code - 2.0](neo4j-lib-shelltools-2.0/)
+
+[Chocolatey Package](https://chocolatey.org/packages/neo4j-lib-shelltools)
+
+
+### neo4j-lib-mapdb
+This package installs the opencsv library
+
+[Source Code - 0.9.3](neo4j-lib-mapdb-0.9.3/)
+
+[Chocolatey Package](https://chocolatey.org/packages/neo4j-lib-mapdb)
+
+
 ### neo4j-lib-opencsv
 This package installs the opencsv library
 
