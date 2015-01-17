@@ -1,4 +1,4 @@
-neo4j-community-beta
+neo4j-community
 ==========================
 
 ## What is this?
@@ -13,9 +13,9 @@ http://neo4j.com/
 ## How do I install it?
 1. Install Chocolatey https://chocolatey.org/
 2. Install OpenJDK 7 or Oracle Java 7 http://neo4j.com/docs/stable/deployment-requirements.html#_software
-3. Install this package
+3. Install this package.  This package requried the -prelease flag
 ```powershell
-choco install neo4j-community-beta
+choco install neo4j-community -version 2.2.0.2-beta -prerelease
 ```
 4. Open a browser to http://localhost:7474
 
@@ -44,6 +44,6 @@ Copies the file specified to `%NEO4J_HOME%\conf\neo4j-wrapper.conf`.  This is a 
 
 Example usage;
 ```powershell
-choco install neo4j-community-beta -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
+choco install neo4j-community -version 2.2.0.2-beta -prerelease -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
 ```
 This command will install Neo4j to `C:\Apps\Neo`, import the *neo4j.properties* file from `C:\Config\MyNeoProperites.txt` and the *neo4j-server.properties* file from `C:\Config\MyNeoServerProperites.txt`

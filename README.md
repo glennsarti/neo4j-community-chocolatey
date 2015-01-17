@@ -6,24 +6,22 @@ This project is a collection Chocolatey packages to install Neo4j Community Edit
 ### neo4j-community
 This package installs the Neo4j Server Community Edition
 
-[Source Code - 2.1.6](neo4j-community-2.1.6/)
-
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-community)
 
+Standard Releases
+* [Package version 2.1.6](neo4j-community-2.1.6/)
 
-### neo4j-community-beta
-This package installs the latest **BETA** Neo4j Server Community Edition
 
-[Source Code - 2.2.0 M2](neo4j-community-beta-2.2.0.2/)
+Beta Releases
+* [Package version - 2.2.0 M2](neo4j-community-2.2.0.2-beta/)
 
-[Chocolatey Package](https://chocolatey.org/packages/neo4j-community-beta)
 
 ## Libraries
 
 ### neo4j-lib-geoff
 This package installs the GEOFF library
 
-[Source Code - 0.5.0](neo4j-lib-geoff-0.5.0/)
+[Package version 0.5.0](neo4j-lib-geoff-0.5.0/)
 
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-lib-geoff)
 
@@ -31,7 +29,7 @@ This package installs the GEOFF library
 ### neo4j-lib-shelltools
 This package installs the Shell Tools library
 
-[Source Code - 2.0](neo4j-lib-shelltools-2.0/)
+[Package version 2.0](neo4j-lib-shelltools-2.0/)
 
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-lib-shelltools)
 
@@ -39,7 +37,7 @@ This package installs the Shell Tools library
 ### neo4j-lib-mapdb
 This package installs the opencsv library
 
-[Source Code - 0.9.3](neo4j-lib-mapdb-0.9.3/)
+[Package version 0.9.3](neo4j-lib-mapdb-0.9.3/)
 
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-lib-mapdb)
 
@@ -47,7 +45,7 @@ This package installs the opencsv library
 ### neo4j-lib-opencsv
 This package installs the opencsv library
 
-[Source Code - 2.3](neo4j-lib-opencsv-2.3/)
+[Package version 2.3](neo4j-lib-opencsv-2.3/)
 
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-lib-opencsv)
 
