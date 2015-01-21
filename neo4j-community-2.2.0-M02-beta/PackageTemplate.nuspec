@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>neo4j-community</id>
-    <version>2.2.0.2-beta</version>
+    <version>2.2.0-M02-beta</version>
     <title>Neo4j Community Edition</title>
     <authors>Emil Eifrem,Johan Svensson</authors><!-- App Owners -->
     <owners>Glenn Sarti</owners> <!-- Package Maintainers -->

@@ -13,7 +13,7 @@ Standard Releases
 
 
 Beta Releases
-* [Package version - 2.2.0 M2](neo4j-community-2.2.0.2-beta/)
+* [Package version - 2.2.0 M2](neo4j-community-2.2.0-M02-beta/)
 
 
 ## Libraries
