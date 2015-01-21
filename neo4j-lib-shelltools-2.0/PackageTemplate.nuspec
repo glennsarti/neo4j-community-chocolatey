@@ -24,6 +24,7 @@ Full information is available at the pacakge project site https://github.com/gle
       <dependency id="neo4j-lib-geoff" version="[0.5.0]" />
       <dependency id="neo4j-lib-mapdb" version="[0.9.3]" />
       <dependency id="neo4j-lib-opencsv" version="[2.3]" />
+      <dependency id="neo4j-community" version="[2.1,2.2)" />
     </dependencies>  
   </metadata>
   <files>

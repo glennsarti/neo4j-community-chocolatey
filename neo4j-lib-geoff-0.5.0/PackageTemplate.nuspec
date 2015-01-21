@@ -19,6 +19,10 @@ Full information is available at the pacakge project site https://github.com/gle
     <summary>The neo4j-geoff project provides a core Geoff library plus a Neo4j server plugin, enabling usage via the RESTful web service interface</summary>
     <releaseNotes>Full list of changes are available on GitHub; https://github.com/glennsarti/neo4j-community-chocolatey</releaseNotes>
     <tags>neo4j graph community database nosql library geoff</tags>
+
+    <dependencies>
+      <dependency id="neo4j-community" version="[2.1,2.2)" />
+    </dependencies>  
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
