@@ -10,6 +10,7 @@ This package installs the Neo4j Server Community Edition
 
 Standard Releases
 * [Package version 2.1.6](neo4j-community-2.1.6/)
+* [Package version 2.1.6](neo4j-community-2.1.7/)
 
 
 Beta Releases
