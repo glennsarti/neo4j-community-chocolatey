@@ -147,7 +147,7 @@ try {
     $args = "install"
     Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow | Out-Null
     
-    $neoService = Get-Service -Name "Neo4j-Server" -ErrorAction Continuere
+    $neoService = Get-Service -Name "Neo4j-Server" -ErrorAction Continue
     if ($neoService -eq $null) {
       Throw "The Neo4j Sever Service failed to install"
     }
