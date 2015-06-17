@@ -89,7 +89,7 @@ try {
   $existingNeoHome = [string] (Get-EnvironmentVariable -Name 'NEO4J_HOME' -Scope 'Machine')
   if ($existingNeoHome -eq '')
   {
-    $existingNeoHome = [string] ( (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -ErrorAction Ignore).'NEO4J_HOME' )
+    $existingNeoHome = [string] ( (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -ErrorAction Continue).'NEO4J_HOME' )
   }
   if ($existingNeoHome -ne '') {
     Write-Debug 'The NEO4J_HOME environment variable is set.  Checking the version of Neo4j...'
@@ -147,7 +147,7 @@ try {
     $args = "install"
     Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow | Out-Null
     
-    $neoService = Get-Service -Name "Neo4j-Server" -ErrorAction Ignore
+    $neoService = Get-Service -Name "Neo4j-Server" -ErrorAction Continuere
     if ($neoService -eq $null) {
       Throw "The Neo4j Sever Service failed to install"
     }

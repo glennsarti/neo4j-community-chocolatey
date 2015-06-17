@@ -15,7 +15,7 @@ http://neo4j.com/
 2. Install OpenJDK 7 or Oracle Java 7 http://neo4j.com/docs/stable/deployment-requirements.html#_software
 3. Install this package
 ```powershell
-choco install neo4j-community -version 2.2.1
+choco install neo4j-community -version 2.2.1.20150617
 ```
 4. Open a browser to http://localhost:7474
 
@@ -44,6 +44,6 @@ Copies the file specified to `%NEO4J_HOME%\conf\neo4j-wrapper.conf`.  This is a 
 
 Example usage;
 ```powershell
-choco install neo4j-community -version 2.2.1 -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
+choco install neo4j-community -version 2.2.1.20150617 -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
 ```
 This command will install Neo4j to `C:\Apps\Neo`, import the *neo4j.properties* file from `C:\Config\MyNeoProperites.txt` and the *neo4j-server.properties* file from `C:\Config\MyNeoServerProperites.txt`

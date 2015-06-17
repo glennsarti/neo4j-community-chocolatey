@@ -1,4 +1,4 @@
-﻿$PackageName = 'neo4j-community'
+$PackageName = 'neo4j-community'
 # Per-package parameters
 $downloadUrl = 'http://neo4j.com/artifact.php?name=neo4j-community-2.2.0-windows.zip'
 $md5Checksum = '9fa871bcec2525e578a598669483f570'
@@ -147,7 +147,7 @@ try {
     $args = "install"
     Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow | Out-Null
     
-    $neoService = Get-Service -Name "Neo4j-Server" -ErrorAction Continue
+    $neoService = Get-Service -Name "Neo4j-Server" -ErrorAction Continuere
     if ($neoService -eq $null) {
       Throw "The Neo4j Sever Service failed to install"
     }
