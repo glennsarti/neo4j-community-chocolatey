@@ -6,7 +6,7 @@ try {
   # Failing that, try a registry hack
   if ($neoHome -eq '')
   {
-    $neoHome = [string] ( (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -ErrorAction Ignore).'NEO4J_HOME' )
+    $neoHome = [string] ( (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -ErrorAction Continue).'NEO4J_HOME' )
   }
   if ($neoHome -eq '') { throw "Could not find the Neo4jHome directory" }
 
