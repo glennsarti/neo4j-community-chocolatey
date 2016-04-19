@@ -15,4 +15,5 @@ SET PKGPARAMS=
 IF NOT [%2] == [] SET PKGPARAMS=-packageParameters "%2 %3 %4 %3 %5 %6 %7 %8 %9"
 
 ECHO Installing (%PKGPARAMS%)...
-choco install %PKGNAME% -source "%THISDIR%\..\artefacts" -debug %PKGPARAMS%
+choco install %PKGNAME% -source "%THISDIR%\..\artefacts"  -debug -y %PKGPARAMS%
+REM choco install %PKGNAME% -source "%THISDIR%\..\artefacts" -pre -debug -y %PKGPARAMS%

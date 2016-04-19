@@ -10,5 +10,5 @@ IF [%PKGNAME%] == [] (
   ECHO Missing package name
 ) ELSE (
   ECHO Uninstalling %PKGNAME% ...
-  choco uninstall %PKGNAME% -debug 
+  choco uninstall %PKGNAME% -debug -y
 )
