@@ -18,8 +18,10 @@ Note - This chocolatey package is not created or maintained by Neo4j, however th
 * This chocolatey package supports Package Parameters;
 `/Install:<Install Path>`
 `/ImportNeoProperties:<Path to file>`
-`/ImportNeoServerProperties:<Path to file>`
 `/ImportServiceProperties:<Path to file>`
+`/HTTPEndPoint:<Host/IP:port>`
+`/HTTPSEndPoint:<Host/IP:port>`
+`/ServiceName:<Windows Service Name>`
 
 ### This will install BETA software and is for development only
 

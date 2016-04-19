@@ -134,7 +134,6 @@ try {
   # Default the values
   $InstallDir = Join-Path -Path $InstallDir -ChildPath $PackageName
   $ImportNeoProperties = ""
-  $ImportNeoServerProperties = ""
   $ImportServiceProperties = ""
   $WindowsServiceName = ""
   $HTTPEndpoint = ""
