@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>{{PackageName}}</id>
+    <version>{{PackageVersion}}</version>
+    <title>Neo4j Community Edition</title>
+    <authors>Emil Eifrem,Johan Svensson</authors><!-- App Owners -->
+    <owners>Glenn Sarti</owners> <!-- Package Maintainers -->
+    <licenseUrl>http://neo4j.com/open-source-project/</licenseUrl>
+    <projectUrl>http://neo4j.com/</projectUrl>
+    <iconUrl><![CDATA[ https://avatars3.githubusercontent.com/u/201120?v=3&s=200 ]]></iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description><![CDATA[ Neo4j is the world's leading Graph Database. It is a high performance graph store with all the features expected of a mature and robust database, like a friendly query language and ACID transactions. The programmer works with a flexible network structure of nodes and relationships rather than static tables yet enjoys all the benefits of enterprise-quality database. For many applications, Neo4j offers orders of magnitude performance benefits compared to relational DBs.
+
+Note - This chocolatey package is not created or maintained by Neo4j, however the installation media used is an official distribution from Neo4j
+* Requires OpenJDK 7/8 or Oracle Java 7/8 to be installed as per http://neo4j.com/docs/stable/deployment-requirements.html#_software
+* This package only installs the 64 bit version
+* This chocolatey package supports Package Parameters;
+`/Install:<Install Path>`
+`/ImportNeoProperties:<Path to file>`
+`/ImportNeoServerProperties:<Path to file>`
+`/ImportServiceProperties:<Path to file>`
+
+### This will install BETA software and is for development only
+
+e.g. `choco install {{PackageName}} -version {{PackageVersion}} -prerelease -packageParameters "/Install:C:\Apps\Neo"`
+
+Full information is available at the pacakge project site https://github.com/glennsarti/neo4j-community-chocolatey
+    ]]></description>
+    <summary>Neo4j is a high performance graph store.  It is scalable, highly-performant and open source.</summary>
+    <releaseNotes>Full list of changes are available on GitHub; https://github.com/glennsarti/neo4j-community-chocolatey
+
+### Version {{PackageVersion}}
+* Initial Release
+    </releaseNotes>
+    <tags>neo4j graph community database nosql</tags>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
