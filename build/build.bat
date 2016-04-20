@@ -36,13 +36,11 @@ IF NOT EXIST "%SRC%\PackageTemplate.nuspec" (
   EXIT /B 255
 )
 
-PUSHD
-CD /D %THISDIR%
+PUSHD "%ARTEFACTS%"
 
 REM Start the build process...
 REM Package version ALWAYS comes from the nuspec file
-ECHO Run Nuget Pack for "%PKGNAME%\PackageTemplate.nuspec"
-"nuget.exe" pack "%SRC%\PackageTemplate.nuspec" -NonInteractive -NoPackageAnalysis -OutputDirectory "%ARTEFACTS%"
+choco pack "%SRC%\PackageTemplate.nuspec"
 
 POPD
 
