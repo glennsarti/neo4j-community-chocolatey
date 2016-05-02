@@ -1,7 +1,7 @@
 $PackageName = 'neo4j-community'
 # Per-package parameters
 $downloadUrl = 'http://neo4j.com/artifact.php?name=neo4j-community-2.3.3-windows.zip'
-$md5Checksum = '70fee0ead6ed53db5d527afc25f00d14'
+$md5Checksum = '0afaa30776bd3eddf0a623b2a57d3d21'
 $neozipSubdir = 'neo4j-community-2.3.3'
 $neoServerApiJarSuffix = '2.3.3'
 
