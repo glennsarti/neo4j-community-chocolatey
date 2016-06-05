@@ -12,7 +12,7 @@ http://neo4j.com/
 
 ## How do I install it?
 1. Install Chocolatey https://chocolatey.org/
-2. Install OpenJDK 7 or Oracle Java 7 http://neo4j.com/docs/stable/deployment-requirements.html#_software
+2. Install OpenJDK 8 or Oracle Java 8 http://neo4j.com/docs/stable/deployment-requirements.html#_software
 3. Install this package.  This package requried the -prelease flag
 ```powershell
 choco install neo4j-community -version 3.0.0
