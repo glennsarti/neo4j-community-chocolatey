@@ -1,10 +1,12 @@
 # PSake Configuration File
 # https://github.com/psake/psake
 
+# Init
 Properties {
   [string]$pkgName = $Package
   [string]$pkgParams = $PackageParameters
 }
+$script:pkgName = $null
 
 $ErrorActionPreference = "Stop"
 
@@ -82,9 +84,29 @@ Task Pack_All -Depends Clean -Description 'Packs all nuget templates into packag
 
 Task Pack -Depends Clean -Description 'Packs a nuget template into a package' {
   if ($pkgName -eq '') { [string]$pkgName = $script:pkgName}
-  if ($pkgname -eq '') { Throw "Pack requires a 'package' parameter/property" }
-  
-  # TODO Show a list of packages if none selected
+  if ($pkgname -eq '') {
+    # Display a list of packages and select one
+    $pkgList = Get-ChildItem -Path $srcDirectory |
+      Sort-Object -Property Name |
+      ? { $_.PSIsContainer } |
+      ? { Test-Path -Path (Join-Path -Path $_.Fullname -ChildPath 'PackageTemplate.nuspec') } | % {
+        Write-Output $_.Name
+    }
+
+    # Get the packagename
+    do {
+      $index = 1
+      Write-Host "Select a package to build"
+      $pkgList | % {
+        Write-Host "$($index). $($_)"
+        $index++
+      }
+      $misc = Read-Host -Prompt "Select a template (1..$($pkgList.Length))"
+      try {
+        $pkgName = $pkgList[$misc - 1]
+      } catch { $pkgName = '' }
+    } while ($pkgName -eq '')
+  }
   
   # Sanity Checks
   $pkgPath = Join-Path -Path $PSScriptRoot -ChildPath $pkgName
