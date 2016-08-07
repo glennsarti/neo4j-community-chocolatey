@@ -1,6 +1,14 @@
+Function Invoke-Clean() {
+  if (Test-Path -Path $artefactDir) {
+    "Cleaning $artefactDir ..."
+    Remove-Item $artefactDir -Recurse -Force | Out-Null
+  }
+  New-Item -Path $artefactDir -ItemType Directory | Out-Null
+}
+
 Function Invoke-Pack($pkgName) {
   # Sanity Checks
-  $pkgPath = Join-Path -Path $PSScriptRoot -ChildPath $pkgName
+  $pkgPath = Join-Path -Path $srcDirectory -ChildPath $pkgName
   $pkgNuspec = Join-Path -Path $pkgPath -ChildPath 'PackageTemplate.nuspec'
   if (!(Test-Path -Path $pkgPath)) { Throw "Could not find package at $pkgPath" }
   if (!(Test-Path -Path $pkgNuspec)) { Throw "Could not find package nuspec at $pkgNuspec" }
@@ -10,6 +18,13 @@ Function Invoke-Pack($pkgName) {
   Set-Location -Path $artefactDir | Out-Null
   &choco pack $pkgNuspec
   Set-Location -Path $cwd | Out-Null
+}
+
+Function Invoke-PackAll() {
+  Get-ChildItem -Path $srcDirectory | ? { $_.PSIsContainer } |
+    ? { Test-Path -Path (Join-Path -Path $_.Fullname -ChildPath 'PackageTemplate.nuspec') } | % {
+      Invoke-Pack -PkgName $_.Name
+  }
 }
 
 Function Invoke-Build($pkgName) {
@@ -54,6 +69,16 @@ Function Invoke-Build($pkgName) {
     [System.IO.File]::WriteAllText($dstFilename,$content)
 
     Write-Host $dstFilename
+  }
+}
+
+Function Invoke-BuildAll {
+  $pkgList = Get-ChildItem -Path $templateDir |
+    Sort-Object -Property Name |
+    ? { !$_.PSIsContainer } |
+    ? { $_.Name -match '^package-' } | % {
+      # Quick and dirty way to get the package name
+      Invoke-Build -PkgName ($_.Name.ToLower().Replace('package-','').Replace('.ps1',''))
   }
 }
 

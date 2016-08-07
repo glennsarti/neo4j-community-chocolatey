@@ -27,10 +27,7 @@ Get-ChildItem -Path $automationDir |
 Task Default -Depends Build_All,Pack_All
 
 Task Pack_All -Depends Clean -Description 'Packs all nuget templates into packages' {
-  Get-ChildItem -Path $PSScriptRoot | ? { $_.PSIsContainer } |
-    ? { Test-Path -Path (Join-Path -Path $_.Fullname -ChildPath 'PackageTemplate.nuspec') } | % {
-      Invoke-Pack -PkgName $_.Name
-  }
+  Invoke-PackAll
 }
 
 Task Pack -Depends Clean -Description 'Packs a nuget template into a package' {
@@ -69,13 +66,7 @@ Task Pack -Depends Clean -Description 'Packs a nuget template into a package' {
 }
 
 Task Build_All -Description 'Creates all packages from package templates' {
-  $pkgList = Get-ChildItem -Path $templateDir |
-    Sort-Object -Property Name |
-    ? { !$_.PSIsContainer } |
-    ? { $_.Name -match '^package-' } | % {
-      # Quick and dirty way to get the package name
-      Invoke-Build -PkgName ($_.Name.ToLower().Replace('package-','').Replace('.ps1',''))
-  }
+  Invoke-BuildAll
 }
 
 Task Build -Description 'Creates a package from a package template' {
@@ -111,11 +102,7 @@ Task Build -Description 'Creates a package from a package template' {
 }
 
 Task Clean -Description 'Cleans artefact directory' {
-  if (Test-Path -Path $artefactDir) {
-    "Cleaning $artefactDir ..."
-    Remove-Item $artefactDir -Recurse -Force | Out-Null
-  }
-  New-Item -Path $artefactDir -ItemType Directory | Out-Null
+  Invoke-Clean
 }
 
 Task Install -Depend Build,Pack -Description 'Installs a built and packed template package' {
@@ -195,5 +182,13 @@ Task AppVeyor -Description 'Automated task run by AppVeyor' {
 
     Write-Host "Publishing to Chocolatey..."
     # TODO Publish to ChocoGallery if not exists (?)
+
+  } else {
+    Write-Host "Not a scheduled build"
+
+    Invoke-Clean
+    Invoke-BuildAll
+    Invoke-GenerateReadMe -RootDir $srcDirectory | Out-Null
+    Invoke-PackAll
   }
 }
