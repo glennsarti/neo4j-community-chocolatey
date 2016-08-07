@@ -13,73 +13,24 @@ $ErrorActionPreference = "Stop"
 $srcDirectory = $PSScriptRoot
 $artefactDir = Join-Path -Path $srcDirectory -ChildPath 'artefacts'
 $templateDir = Join-Path -Path $srcDirectory -ChildPath 'templates'
+$automationDir = Join-Path -Path $srcDirectory -ChildPath 'automation'
+
 
 # Helper Functions
-Function Invoke-Pack($pkgName) {
-  # Sanity Checks
-  $pkgPath = Join-Path -Path $PSScriptRoot -ChildPath $pkgName
-  $pkgNuspec = Join-Path -Path $pkgPath -ChildPath 'PackageTemplate.nuspec'
-  if (!(Test-Path -Path $pkgPath)) { Throw "Could not find package at $pkgPath" }
-  if (!(Test-Path -Path $pkgNuspec)) { Throw "Could not find package nuspec at $pkgNuspec" }
-
-  "Packing $pkgName ..."
-  $cwd = Get-Location
-  Set-Location -Path $artefactDir | Out-Null
-  &choco pack $pkgNuspec
-  Set-Location -Path $cwd | Out-Null
-}
-Function Invoke-Build($pkgName) {
-  # Get the package definition
-  $filename = Join-Path -Path $templateDir -ChildPath "package-$($pkgName).ps1"
-  if (!(Test-Path -Path $filename)) {
-    Throw "Could not find package definition $filename"
+Get-ChildItem -Path $automationDir |
+  ? { !$_.PSIsContainer } |
+  ? { $_.Name -like '*Helper*.ps1' } |
+  % {
+    . ($_.FullName)
   }
-  # Execute the package definition
-  $PackageDefinition = @{}
-  . $filename
-
-  # More sanity checks
-  $templatePath = Join-Path -Path $templateDir -ChildPath ($PackageDefinition.TemplateName)
-  if (!(Test-Path -Path $templatePath)) {
-    Throw "Could not find template $templatePath"
-  }
-  Write-Host "Using template $($PackageDefinition.TemplateName)..."
-
-  # Create directory for the package
-  $pkgDirectory = Join-Path -Path $srcDirectory -ChildPath $pkgName
-  if (Test-Path $pkgDirectory) {
-    Write-Host "Removing previous directory..."
-    Remove-Item -Path $pkgDirectory -Recurse -Force -Confirm:$false | Out-Null
-  }
-
-  Write-Host "Creating the package directory..."
-  xcopy "$templatePath" "$pkgDirectory" /s /e /i /t
-
-  Write-Host "Parsing template..."
-  Get-ChildItem -Path $templatePath -Recurse | ? { !$_.psiscontainer } | % {
-    $srcFilename = $_.Fullname  
-    $dstFilename = $pkgDirectory + $srcFilename.SubString($templatePath.Length)
-    
-    $content = [System.IO.File]::ReadAllText($srcFilename)
-
-    # Replace the tokens in the template  
-    $PackageDefinition.Keys | % { 
-      $content = $content -replace "{{$($_)}}",$PackageDefinition[$_]
-    }
-      
-    [System.IO.File]::WriteAllText($dstFilename,$content)
-    
-    Write-Host $dstFilename
-  }
-}
 
 Task Default -Depends Build_All,Pack_All
 
-Task Pack_All -Depends Clean -Description 'Packs all nuget templates into packages' {  
-  Get-ChildItem -Path $PSScriptRoot | ? { $_.PSIsContainer } | 
+Task Pack_All -Depends Clean -Description 'Packs all nuget templates into packages' {
+  Get-ChildItem -Path $PSScriptRoot | ? { $_.PSIsContainer } |
     ? { Test-Path -Path (Join-Path -Path $_.Fullname -ChildPath 'PackageTemplate.nuspec') } | % {
       Invoke-Pack -PkgName $_.Name
-  }  
+  }
 }
 
 Task Pack -Depends Clean -Description 'Packs a nuget template into a package' {
@@ -107,7 +58,7 @@ Task Pack -Depends Clean -Description 'Packs a nuget template into a package' {
       } catch { $pkgName = '' }
     } while ($pkgName -eq '')
   }
-  
+
   # Sanity Checks
   $pkgPath = Join-Path -Path $PSScriptRoot -ChildPath $pkgName
   $pkgNuspec = Join-Path -Path $pkgPath -ChildPath 'PackageTemplate.nuspec'
@@ -120,10 +71,10 @@ Task Pack -Depends Clean -Description 'Packs a nuget template into a package' {
 Task Build_All -Description 'Creates all packages from package templates' {
   $pkgList = Get-ChildItem -Path $templateDir |
     Sort-Object -Property Name |
-    ? { !$_.PSIsContainer } | 
+    ? { !$_.PSIsContainer } |
     ? { $_.Name -match '^package-' } | % {
       # Quick and dirty way to get the package name
-      Invoke-Build -PkgName  ($_.Name.ToLower().Replace('package-','').Replace('.ps1',''))
+      Invoke-Build -PkgName ($_.Name.ToLower().Replace('package-','').Replace('.ps1',''))
   }
 }
 
@@ -133,12 +84,12 @@ Task Build -Description 'Creates a package from a package template' {
     # Display a list of packages and select one
     $pkgList = Get-ChildItem -Path $templateDir |
       Sort-Object -Property Name |
-      ? { !$_.PSIsContainer } | 
+      ? { !$_.PSIsContainer } |
       ? { $_.Name -match '^package-' } | % {
         # Quick and dirty way to get the package name
         Write-Output ($_.Name.ToLower().Replace('package-','').Replace('.ps1',''))
     }
-    
+
     # Get the packagename
     do {
       $index = 1
@@ -153,9 +104,9 @@ Task Build -Description 'Creates a package from a package template' {
       } catch { $pkgName = '' }
     } while ($pkgName -eq '')
   }
-  
+
   Invoke-Build -PkgName $pkgName
-  
+
   $script:pkgName = $pkgName
 }
 
@@ -170,7 +121,7 @@ Task Clean -Description 'Cleans artefact directory' {
 Task Install -Depend Build,Pack -Description 'Installs a built and packed template package' {
   if ($pkgName -eq '') { [string]$pkgName = $script:pkgName}
   if ($pkgname -eq '') { Throw "Install requires a 'package' parameter/property" }
-  
+
   # Find the PackageTemplate.nuspec
   $nuspec = Join-Path -Path (Join-Path -Path $srcDirectory -ChildPath $pkgName) -ChildPath 'PackageTemplate.nuspec'
   if (!(Test-Path -Path $nuspec)) { Throw "Could not find package nuspec at $nuspec"}
@@ -186,14 +137,14 @@ Task Install -Depend Build,Pack -Description 'Installs a built and packed templa
     $pkgParams,$pkgPreRelease)
 
   Write-Host "Installing with: choco $args"
-  
+
   & choco @args
 }
 
 Task Uninstall -Depend Build,Pack -Description 'Uninstalls a built and packed template package' {
   if ($pkgName -eq '') { [string]$pkgName = $script:pkgName}
   if ($pkgname -eq '') { Throw "Install requires a 'package' parameter/property" }
-  
+
   # Find the PackageTemplate.nuspec
   $nuspec = Join-Path -Path (Join-Path -Path $srcDirectory -ChildPath $pkgName) -ChildPath 'PackageTemplate.nuspec'
   if (!(Test-Path -Path $nuspec)) { Throw "Could not find package nuspec at $nuspec"}
@@ -207,10 +158,26 @@ Task Uninstall -Depend Build,Pack -Description 'Uninstalls a built and packed te
     $pkgParams)
 
   Write-Host "Uninstalling with: choco $args"
-  
+
   & choco @args
 }
 
 # TODO Publish to ChocoGallery if not exists (?)
 
+Task Automate_NewNeo4jTemplates -Description 'Creates package templates for new Neo4j versions' {
+  Invoke-CreateMissingTemplates -RootDir $srcDirectory | Out-Null
+}
+
+Task Automate_GenerateReadMe -Description 'Generates the README file from the current packages' {
+  Invoke-GenerateReadMe -RootDir $srcDirectory | Out-Null
+}
+
+Task CreateNewPackages -Description 'Updates the repository with newly release Neo4j versions' {
+  Invoke-CreateNewPackageProcess -RootDir $srcDirectory
+}
+
 # TODO Modify the root README
+
+Task AppVeyor -Description 'Automated task run by AppVeyor' {
+  if ($ENV:APPVEYOR -eq $null) { Throw "Only run in AppVeyor!"; return }
+}
