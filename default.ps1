@@ -162,8 +162,6 @@ Task Uninstall -Depend Build,Pack -Description 'Uninstalls a built and packed te
   & choco @args
 }
 
-# TODO Publish to ChocoGallery if not exists (?)
-
 Task Automate_NewNeo4jTemplates -Description 'Creates package templates for new Neo4j versions' {
   Invoke-CreateMissingTemplates -RootDir $srcDirectory | Out-Null
 }
@@ -176,8 +174,26 @@ Task CreateNewPackages -Description 'Updates the repository with newly release N
   Invoke-CreateNewPackageProcess -RootDir $srcDirectory
 }
 
-# TODO Modify the root README
-
+# Appveyor Automation
 Task AppVeyor -Description 'Automated task run by AppVeyor' {
   if ($ENV:APPVEYOR -eq $null) { Throw "Only run in AppVeyor!"; return }
+
+  Write-Host "Running AppVeyor Task"
+
+  if ($ENV:APPVEYOR_SCHEDULED_BUILD -eq "True") {
+    Write-Host "*** This is a scheduled build"
+
+    $pkgList = Invoke-CreateNewPackageProcess -RootDir $srcDirectory
+
+    if ($pkgList -eq $null) { return }
+
+    & git add --a
+    & git commit -m "New Packages added by Appveyor $((Get-Date).ToString("yyyy-MM-dd-HH-mm"))"
+
+    Write-Host "Pushing to origin..."
+    # & git push origin
+
+    Write-Host "Publishing to Chocolatey..."
+    # TODO Publish to ChocoGallery if not exists (?)
+  }
 }

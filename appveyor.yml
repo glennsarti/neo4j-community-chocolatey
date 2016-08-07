@@ -1,0 +1,23 @@
+version: 1.0.{build}
+branches:
+  only:
+  - master
+environment:
+  github_access_token:
+    secure: PBm4kGT2TjiNXOmiMN0NdDJs6jfxoK5PRD+ZEDoyKhoRTx/fLk5zBk0P3oAhRNNm
+  # chocolatey_access_token:
+  #   secure: xxxxx
+install:
+  # Install psake
+  - choco install psake -y
+  # Configure Git
+  - git config --global credential.helper store
+  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n"
+  - git config --global user.email "glennsarti@users.noreply.github.com"
+  - git config --global user.name "Glenn Sarti"
+
+build:
+  verbosity: minimal
+
+build_script:
+  - psake AppVeyor
