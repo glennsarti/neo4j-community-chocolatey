@@ -1,5 +1,5 @@
 $PackageDefinition = @{
-  "TemplateName" = "neo4j-community-v3-java8";
+  "TemplateName" = "neo4j-community-v3";
   "PackageName" = "neo4j-community";
   "PackageVersion" = "3.0.0";
   "DownloadURL" = "http://neo4j.com/artifact.php?name=neo4j-community-3.0.0-windows.zip";
