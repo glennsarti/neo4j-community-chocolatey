@@ -172,17 +172,20 @@ Task AppVeyor -Description 'Automated task run by AppVeyor' {
 
     $pkgList = Invoke-CreateNewPackageProcess -RootDir $srcDirectory
 
-    if ($pkgList -eq $null) { return }
+    if ($pkgList -ne $null) {
+      & git add --a
+      & git commit -m "New Packages added by Appveyor $((Get-Date).ToString("yyyy-MM-dd-HH:mm:sszzz"))"
 
-    & git add --a
-    & git commit -m "New Packages added by Appveyor $((Get-Date).ToString("yyyy-MM-dd-HH-mm"))"
+      Write-Host "Pushing to origin..."
+      & git push origin
+    }
 
-    Write-Host "Pushing to origin..."
-    # & git push origin
+    Write-Host "Building all packages"
+    Invoke-Clean
+    Invoke-PackAll
 
     Write-Host "Publishing to Chocolatey..."
-    # TODO Publish to ChocoGallery if not exists (?)
-
+    Invoke-SubmitMissingPackages -pkgDir $artefactDir -locallist "$srcDirectory\submitted_pkgs.txt"
   } else {
     Write-Host "Not a scheduled build"
 
