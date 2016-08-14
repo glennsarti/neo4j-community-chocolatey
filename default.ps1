@@ -177,7 +177,7 @@ Task AppVeyor -Description 'Automated task run by AppVeyor' {
       & git commit -m "New Packages added by Appveyor $((Get-Date).ToString("yyyy-MM-dd-HH:mm:sszzz"))"
 
       Write-Host "Pushing to origin..."
-      # & git push origin
+      & git push origin
     }
 
     Write-Host "Building all packages"
