@@ -97,3 +97,59 @@ Function Invoke-CreateNewPackageProcess($RootDir) {
 
   Return $pkgList
 }
+
+Function Invoke-SubmitMissingPackages($pkgDir,$locallist) {
+  # The LocalList is a text file of packages that have been submitted
+  # This stops the automation continually trying to upload packages
+  if (-not (Test-Path -Path $locallist)) { '' | Out-File -FilePath $locallist -Encoding ASCII }
+
+  # Automated package list
+  'neo4j-community' | % {
+    $pkgName = $_
+
+    # Get the list from chocolatey
+    Write-Host "Getting list of packages for $pkgName"
+    $result = (& choco search $pkgName --all-versions --exact --prerelease --limit-output --page-size 100)
+    if ($LASTEXITCODE -ne 0) { throw "Could not get list of chocolatey packages for $pkgName" }
+
+    $chocoPkgList = ($result | % {
+      $version = ($_.split('|')[1])
+      Write-Host "Chocolatey has $pkgName-$version"
+      Write-Output $version
+    })
+
+    # Get the list of packages previously submitted
+    Write-Host "Getting local package list"
+    $localPkgList = (Get-Content -Path $locallist | ? { $_.StartsWith($pkgName + '.') } | % {
+      if ($_.Trim() -ne '') { Write-Output $_.Trim() }
+    })
+
+    Write-Host "Parsing package directory..."
+    # Find the local packages
+    Get-ChildItem "$($pkgDir)\*.nupkg" | ? { $_.Name.StartsWith($pkgName + '.')} | % {
+      $thisFile = $_
+      $thisVersion = $_.Name.Substring($pkgName.Length + 1).Replace('.nupkg','')
+
+      if ($chocoPkgList -notcontains $thisVersion) {
+        Write-Host "Local package $($_.Name) is missing from Chocolatey"
+
+        if ($localPkgList -notcontains $thisFile.BaseName) {
+          Write-Host "Pushing into chocolatey..."
+          #& choco push ($thisFile.FullName) --source https://chocolatey.org/
+          #if ($LASTEXITCODE -ne 0) { Throw "Failed to push $($thisFile.FullName) to Chocolatey with error $LASTEXITCODE"}
+
+          Write-Host "Adding package to submitted list"
+          $thisFile.Name.Replace('.nupkg','') | Out-File -Append -NoClobber -FilePath $locallist -Encoding ASCII
+
+          & git add ($locallist)
+          & git commit -m "New packages publish by Appveyor $((Get-Date).ToString("yyyy-MM-dd-HH:mm:sszzz"))"
+          # & git push origin
+        } else {
+          Write-Host "Local package $($thisFile.Name) has been submitted previously"
+        }
+      } else {
+        Write-Host "Local package $($thisFile.Name) is already in Chocolatey"
+      }
+    }
+  }
+}
