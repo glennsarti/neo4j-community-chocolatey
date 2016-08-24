@@ -21,8 +21,9 @@ Function Invoke-Pack($pkgName) {
 }
 
 Function Invoke-PackAll() {
-  Get-ChildItem -Path $srcDirectory | ? { $_.PSIsContainer } |
-    ? { Test-Path -Path (Join-Path -Path $_.Fullname -ChildPath 'PackageTemplate.nuspec') } | % {
+  Get-ChildItem -Path $srcDirectory | Where-Object { $_.PSIsContainer } |
+    Where-Object { Test-Path -Path (Join-Path -Path $_.Fullname -ChildPath 'PackageTemplate.nuspec') } |
+    ForEach-Object {
       Invoke-Pack -PkgName $_.Name
   }
 }
@@ -55,14 +56,14 @@ Function Invoke-Build($pkgName) {
   xcopy "$templatePath" "$pkgDirectory" /s /e /i /t
 
   Write-Host "Parsing template..."
-  Get-ChildItem -Path $templatePath -Recurse | ? { !$_.psiscontainer } | % {
+  Get-ChildItem -Path $templatePath -Recurse | Where-Object { !$_.psiscontainer } | ForEach-Object {
     $srcFilename = $_.Fullname
     $dstFilename = $pkgDirectory + $srcFilename.SubString($templatePath.Length)
 
     $content = [System.IO.File]::ReadAllText($srcFilename)
 
     # Replace the tokens in the template
-    $PackageDefinition.Keys | % {
+    $PackageDefinition.Keys | ForEach-Object {
       $content = $content -replace "{{$($_)}}",$PackageDefinition[$_]
     }
 
@@ -75,8 +76,8 @@ Function Invoke-Build($pkgName) {
 Function Invoke-BuildAll {
   $pkgList = Get-ChildItem -Path $templateDir |
     Sort-Object -Property Name |
-    ? { !$_.PSIsContainer } |
-    ? { $_.Name -match '^package-' } | % {
+    where-Object { !$_.PSIsContainer } |
+    where-Object { $_.Name -match '^package-' } | ForEach-Object {
       # Quick and dirty way to get the package name
       Invoke-Build -PkgName ($_.Name.ToLower().Replace('package-','').Replace('.ps1',''))
   }
@@ -88,7 +89,7 @@ Function Invoke-CreateNewPackageProcess($RootDir) {
   if ($pkgList -eq $null) { Write-Host "No new packages"; return }
 
   # Build out the package
-  $pkgList | % {
+  $pkgList | ForEach-Object {
     Invoke-Build -PkgName $_
   }
 
@@ -104,7 +105,7 @@ Function Invoke-SubmitMissingPackages($pkgDir,$locallist) {
   if (-not (Test-Path -Path $locallist)) { '' | Out-File -FilePath $locallist -Encoding ASCII }
 
   # Automated package list
-  'neo4j-community' | % {
+  'neo4j-community' | ForEach-Object {
     $pkgName = $_
 
     # Get the list from chocolatey
@@ -112,7 +113,7 @@ Function Invoke-SubmitMissingPackages($pkgDir,$locallist) {
     $result = (& choco search $pkgName --all-versions --exact --prerelease --limit-output --page-size 100)
     if ($LASTEXITCODE -ne 0) { throw "Could not get list of chocolatey packages for $pkgName" }
 
-    $chocoPkgList = ($result | % {
+    $chocoPkgList = ($result | ForEach-Object {
       $version = ($_.split('|')[1])
       Write-Host "Chocolatey has $pkgName-$version"
       Write-Output $version
@@ -120,13 +121,13 @@ Function Invoke-SubmitMissingPackages($pkgDir,$locallist) {
 
     # Get the list of packages previously submitted
     Write-Host "Getting local package list"
-    $localPkgList = (Get-Content -Path $locallist | ? { $_.StartsWith($pkgName + '.') } | % {
+    $localPkgList = (Get-Content -Path $locallist | Where-Object { $_.StartsWith($pkgName + '.') } | ForEach-Object {
       if ($_.Trim() -ne '') { Write-Output $_.Trim() }
     })
 
     Write-Host "Parsing package directory..."
     # Find the local packages
-    Get-ChildItem "$($pkgDir)\*.nupkg" | ? { $_.Name.StartsWith($pkgName + '.')} | % {
+    Get-ChildItem "$($pkgDir)\*.nupkg" | Where-Object { $_.Name.StartsWith($pkgName + '.')} | ForEach-Object {
       $thisFile = $_
       $thisVersion = $_.Name.Substring($pkgName.Length + 1).Replace('.nupkg','')
 
