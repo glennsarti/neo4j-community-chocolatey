@@ -16,7 +16,7 @@ install:
   - git config --global user.email "glennsarti@users.noreply.github.com"
   - git config --global user.name "Glenn Sarti"
   # Configure Chocolatey
-  - choco apikey -k %chocolatey_access_token% -s https://chocolatey.org/
+  - ps: if ($ENV:chocolatey_access_token -ne $null) { & (choco apikey -k "$($ENV:chocolatey_access_token)" -s https://chocolatey.org/) }
 
 build:
   verbosity: minimal
