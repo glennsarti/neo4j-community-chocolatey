@@ -12,11 +12,11 @@ install:
   - choco install psake -y
   # Configure Git
   - git config --global credential.helper store
-  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n"
+  - ps: if ($ENV:github_access_token -ne $null) { Write-Output "Writing github key"; Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n" }
   - git config --global user.email "glennsarti@users.noreply.github.com"
   - git config --global user.name "Glenn Sarti"
   # Configure Chocolatey
-  - ps: if ($ENV:chocolatey_access_token -ne $null) { & (choco apikey -k "$($ENV:chocolatey_access_token)" -s https://chocolatey.org/) }
+  - ps: if ($ENV:chocolatey_access_token -ne $null) { (& choco apikey -k "$($ENV:chocolatey_access_token)" -s https://chocolatey.org/) }
 
 build:
   verbosity: minimal
