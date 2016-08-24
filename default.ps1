@@ -167,9 +167,15 @@ Task AppVeyor -Description 'Automated task run by AppVeyor' {
 
   Write-Host "Running AppVeyor Task"
 
+  Get-childItem -Path "env:" |
+    Where-Object { $_.Name -like "APPVEYOR_REPO_*" } | 
+    ForEach-Object { Write-Host "Environment: $($_.Name)=$($_.Value)"}
+
   if ($ENV:APPVEYOR_SCHEDULED_BUILD -eq "True") {
     Write-Host "*** This is a scheduled build"
 
+    if ($ENV:APPVEYOR_REPO_BRANCH -ne 'master') { throw "Scheduled build can only occur on master branch" }
+    & git checkout master
     $pkgList = Invoke-CreateNewPackageProcess -RootDir $srcDirectory
 
     if ($pkgList -ne $null) {
