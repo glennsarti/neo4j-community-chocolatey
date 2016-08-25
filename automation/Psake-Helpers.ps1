@@ -141,9 +141,8 @@ Function Invoke-SubmitMissingPackages($pkgDir,$locallist) {
 
           Write-Host "Adding package to submitted list"
           $thisFile.Name.Replace('.nupkg','') | Out-File -Append -NoClobber -FilePath $locallist -Encoding ASCII
-
           & git add ($locallist)
-          & git commit -m "New packages published by Appveyor $((Get-Date).ToString("yyyy-MM-dd-HH:mm:sszzz"))"
+          & git commit -m "New package $($thisFile.Name.Replace('.nupkg','')) published by Appveyor $((Get-Date).ToString("yyyy-MM-dd-HH:mm:sszzz"))"
           & git push origin
         } else {
           Write-Host "Local package $($thisFile.Name) has been submitted previously"
