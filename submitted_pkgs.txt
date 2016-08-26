@@ -9,3 +9,4 @@ neo4j-community.2.1.6.20150617
 neo4j-community.2.1.6
 neo4j-community.2.2.10
 neo4j-community.2.3.6
+neo4j-community.3.0.4
