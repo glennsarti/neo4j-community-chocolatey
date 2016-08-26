@@ -10,3 +10,4 @@ neo4j-community.2.1.6
 neo4j-community.2.2.10
 neo4j-community.2.3.6
 neo4j-community.3.0.4
+neo4j-community.3.1.0-M07-beta
