@@ -13,6 +13,7 @@ Standard Releases
 * [Package version 3.0.2](neo4j-community-3.0.2/)
 * [Package version 3.0.1](neo4j-community-3.0.1/)
 * [Package version 3.0.0](neo4j-community-3.0.0/)
+* [Package version 2.3.7](neo4j-community-2.3.7/)
 * [Package version 2.3.6](neo4j-community-2.3.6/)
 * [Package version 2.3.3](neo4j-community-2.3.3/)
 * [Package version 2.3.0](neo4j-community-2.3.0/)
