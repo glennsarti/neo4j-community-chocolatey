@@ -24,9 +24,7 @@ try {
   # Remove the environment variable
   Install-ChocolateyEnvironmentVariable "NEO4J_HOME" '' "Machine"
 
-  Write-ChocolateySuccess $PackageName
 } catch {
-  Write-ChocolateyFailure $PackageName "$($_.Exception.Message)"
-  throw
+  throw "$($_.Exception.Message)"
 }
 
