@@ -59,11 +59,22 @@ Function Invoke-CreateMissingTemplates($RootDir) {
       # Generate the rest of the Package Definition
       $PackageVersion = $neoVersion
       $TemplateName = ''
-      if ($neoVersion -like '3.*') { $TemplateName = 'neo4j-community-v3' }
-      if ($neoVersion -like '2.3.*') { $TemplateName = 'neo4j-community8' }
-      if ($neoVersion -like '2.2.*') { $TemplateName = 'neo4j-community' }
-
+      if ($neoVersion -like '3.*') { $TemplateName = 'neo4j-community-v3.1' }
+      if ($neoVersion -like '2.3.*') { $TemplateName = 'neo4j-community8.1' }
+      # Disabled 2.2 automatic generation as it is no longer developed
+      #if ($neoVersion -like '2.2.*') { $TemplateName = 'neo4j-community' }
       if ($TemplateName -eq '') { Throw "Unable to determine Template Name for Neo4j v$($neoVersion)" }
+
+      # Set Private JRE information
+      if ($neoVersion -like '3.*') {
+        $PrivateJavaVersion = "8.0.92.14"
+        $PrivateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+      }
+      if ($neoVersion -like '2.*') {
+        # Neo4j 2.x series is not fully supported in Java 8, but Java 7 is no longer available.
+        $PrivateJavaVersion = "8.0.92.14"
+        $PrivateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+      }
 
       # Beta Version
       if ($neoVersion -notmatch ('^[\d\.]+$')) {
@@ -80,6 +91,8 @@ Function Invoke-CreateMissingTemplates($RootDir) {
   "MD5Checksum" = "$($downloadHash.Hash.ToLower())";
   "NeoZipSubdir" = "neo4j-community-$($neoVersion)";
   "NeoServerApiJarSuffix" = "$($neoVersion)";
+  "PrivateJavaVersion" = "$($PrivateJavaVersion)";
+  "PrivateJreChecksumMD5" = "$($PrivateJreChecksumMD5)";
 }
 "@
       $templateFile = Join-Path -Path "$($RootDir)\templates" -ChildPath "package-neo4j-community-$($PackageVersion).ps1"

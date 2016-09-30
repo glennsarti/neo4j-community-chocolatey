@@ -1,12 +1,12 @@
-$PackageName = 'neo4j-community'
+$PackageName = '{{PackageName}}'
 # Per-package parameters
-$downloadUrl = 'http://neo4j.com/artifact.php?name=neo4j-community-3.0.5-windows.zip'
-$md5Checksum = '9b0cf52efcb7f65242490f26beb530c3'
-$neozipSubdir = 'neo4j-community-3.0.5'
+$downloadUrl = '{{DownloadURL}}'
+$md5Checksum = '{{MD5Checksum}}'
+$neozipSubdir = '{{NeoZipSubdir}}'
 # major.minor.update.build
 # Build is always 14
-$privateJavaVersion = "8.0.92.14"
-$privateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+$privateJavaVersion = "{{PrivateJavaVersion}}"
+$privateJreChecksumMD5 = "{{PrivateJreChecksumMD5}}"
 
 # START Helper Functions
 Function Get-IsJavaInstalled
