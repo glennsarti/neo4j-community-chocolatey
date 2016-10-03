@@ -4,7 +4,7 @@
 ## What is this?
 This project is a Chocolatey package to install the **Beta** Neo4j Community Edition onto a Windows based computer.
 
-The chocolate package can be found at https://chocolatey.org/packages/neo4j-community-beta
+The chocolate package can be found at https://chocolatey.org/packages/neo4j-community
 
 https://chocolatey.org
 
