@@ -1,4 +1,4 @@
-$PackageName = 'neo4j-community'
+$PackageName = '{{PackageName}}'
 
 Function Get-IsJavaInstalled()
 {
@@ -99,13 +99,13 @@ Function Get-IsJavaInstalled()
 try {
   # Get the NeoHome Dir
   #   Try the local environment
-  $neoHome = [string] (Get-EnvironmentVariable -Name 'NEO4J_HOME' -Scope 'Machine')
+  $neoHome = [string] (Get-EnvironmentVariable -Name 'NEO4J_HOME' -Scope 'Machine')  
   # Failing that, try a registry hack
   if ($neoHome -eq '')
   {
     $neoHome = [string] ( (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -ErrorAction Continue).'NEO4J_HOME' )
   }
-  if ($neoHome -eq '') { throw "Could not find the Neo4j installation via the NEO4J_HOME environment variable" }
+  if ($neoHome -eq '') { throw "Could not find the Neo4jHome directory" }
 
   $javaPath = (Get-IsJavaInstalled -Neo4jHome $neoHome)
   if ($javaPath -eq '') { throw "Could not find a Java installation" }
@@ -113,20 +113,20 @@ try {
   $ENV:JAVA_HOME = $javaPath
 
   # Uninstall the Neo4j Service
-  $UninstallBatch = "$($neoHome)\bin\Neo4j.bat"
+  $UninstallBatch = "$($neoHome)\bin\Neo4jInstaller.bat"
   if (!(Test-Path $UninstallBatch)) { throw "Could not find the Neo4j Uninstaller Batch file at $UninstallBatch" }
   
-  Write-Verbose "Uninstalling Neo4j Service..."
-  $args = "uninstall-service"
-  $result = Start-Process -FilePath $UninstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow
-
-  if ($result.ExitCode -ne 0) { Throw "Neo4j uninstallation returned exit code $($result.ExitCode)"}
+  # Uninstall the service
+  $args = "remove"
+  $results = (Start-Process -FilePath $UninstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow)
 
   # Remove the install folder
   Remove-Item -Path $neoHome -Recurse -Force | Out-Null
   
   # Remove the environment variable
   Install-ChocolateyEnvironmentVariable "NEO4J_HOME" '' "Machine"
+
 } catch {
   throw "$($_.Exception.Message)"
 }
+

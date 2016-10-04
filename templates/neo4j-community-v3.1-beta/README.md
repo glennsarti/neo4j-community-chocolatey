@@ -1,4 +1,4 @@
-neo4j-community
+{{PackageName}}
 ==========================
 
 ## What is this?
@@ -15,7 +15,7 @@ http://neo4j.com/
 2. Install OpenJDK 8 or Oracle Java 8 http://neo4j.com/docs/stable/deployment-requirements.html#_software
 3. Install this package.  This package requried the -prelease flag
 ```powershell
-choco install neo4j-community -version 3.1.0-M09-beta -prerelease
+choco install {{PackageName}} -version {{PackageVersion}} -prerelease
 ```
 4. Open a browser to http://localhost:7474
 
@@ -25,7 +25,7 @@ The package supports the following parameters;
 ```
 /Install:<Install Path>
 ```
-Installs Neo4j to the specified directory.  The default is to install to `<Chocolatey Bin Root>\neo4j-community` which is typically `C:\tools\Neo4jCommunity`
+Installs Neo4j to the specified directory.  The default is to install to `<Chocolatey Bin Root>\{{PackageName}}` which is typically `C:\tools\Neo4jCommunity`
 
 ```
 /ImportNeoProperties:<Path to file>
@@ -60,6 +60,6 @@ Note - This setting overrides the NeoProperties file
 
 Example usage;
 ``` powershell
-choco install neo4j-community -version 3.1.0-M09-beta -prerelease -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
+choco install {{PackageName}} -version {{PackageVersion}} -prerelease -packageParameters "/Install:C:\Apps\Neo /ImportNeoProperties:C:\Config\MyNeoProperites.txt /ImportNeoServerProperties:C:\Config\MyNeoServerProperites.txt"
 ```
 This command will install Neo4j to `C:\Apps\Neo`, import the *neo4j.properties* file from `C:\Config\MyNeoProperites.txt` and the *neo4j-server.properties* file from `C:\Config\MyNeoServerProperites.txt`

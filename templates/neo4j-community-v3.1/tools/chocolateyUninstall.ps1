@@ -1,4 +1,4 @@
-$PackageName = 'neo4j-community'
+$PackageName = '{{PackageName}}'
 
 Function Get-IsJavaInstalled()
 {

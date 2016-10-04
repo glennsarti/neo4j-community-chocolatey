@@ -30,6 +30,22 @@ Task Pack_All -Depends Clean -Description 'Packs all nuget templates into packag
   Invoke-PackAll
 }
 
+Task Clean_Choco_Install -Description 'Cleans out a failed Neo4j Installation' {
+  # if service delete it
+
+  $installDir = 'C:\tools\neo4j-community'
+  if (Test-Path -Path $installDir) {
+    Write-Host "Purging $installDir ..."
+    Remove-Item -Path $installDir -Recurse -Force -Confirm:$false | Out-Null
+  }
+
+  $installDir = 'C:\ProgramData\chocolatey\lib\neo4j-community'
+  if (Test-Path -Path $installDir) {
+    Write-Host "Purging $installDir ..."
+    Remove-Item -Path $installDir -Recurse -Force -Confirm:$false | Out-Null
+  }
+}
+
 Task Pack -Depends Clean -Description 'Packs a nuget template into a package' {
   if ($pkgName -eq '') { [string]$pkgName = $script:pkgName}
   if ($pkgname -eq '') {

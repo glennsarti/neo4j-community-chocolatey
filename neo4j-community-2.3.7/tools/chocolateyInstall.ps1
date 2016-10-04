@@ -4,6 +4,141 @@ $downloadUrl = 'http://neo4j.com/artifact.php?name=neo4j-community-2.3.7-windows
 $md5Checksum = 'ac1200a9c15ee9b9798e9bdc07c92f63'
 $neozipSubdir = 'neo4j-community-2.3.7'
 $neoServerApiJarSuffix = '2.3.7'
+# major.minor.update.build
+# Build is always 14
+$privateJavaVersion = "8.0.92.14"
+$privateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+
+# START Helper Functions
+Function Get-IsJavaInstalled
+{
+  [cmdletBinding(SupportsShouldProcess=$false,ConfirmImpact='Low',DefaultParameterSetName='Default')]
+  param ()
+  
+  Process
+  {
+    $javaPath = ''
+    $javaVersion = ''
+    $javaCMD = ''
+    
+    $EnvJavaHome = "$($Env:JAVA_HOME)"
+    
+    # Is JAVA specified in an environment variable
+    if (($javaPath -eq '') -and ($EnvJavaHome -ne $null))
+    {
+      $javaPath = $EnvJavaHome
+      # Modify the java path if a JRE install is detected
+      if (Test-Path -Path "$javaPath\bin\javac.exe") { $javaPath = "$javaPath\jre" }
+    }
+
+    # Attempt to find Java in registry
+    $regKey = 'Registry::HKLM\SOFTWARE\JavaSoft\Java Runtime Environment'    
+    if (($javaPath -eq '') -and (Test-Path -Path $regKey))
+    {
+      $javaVersion = ''
+      try
+      {
+        $javaVersion = [string](Get-ItemProperty -Path $regKey -ErrorAction 'Stop').CurrentVersion
+        if ($javaVersion -ne '')
+        {
+          $javaPath = [string](Get-ItemProperty -Path "$regKey\$javaVersion" -ErrorAction 'Stop').JavaHome
+        }
+      }
+      catch
+      {
+        #Ignore any errors
+        $javaVersion = ''
+        $javaPath = ''
+      }
+    }
+
+    # Attempt to find Java in registry (32bit Java on 64bit OS)
+    $regKey = 'Registry::HKLM\SOFTWARE\Wow6432Node\JavaSoft\Java Runtime Environment'    
+    if (($javaPath -eq '') -and (Test-Path -Path $regKey))
+    {
+      $javaVersion = ''
+      try
+      {
+        $javaVersion = [string](Get-ItemProperty -Path $regKey -ErrorAction 'Stop').CurrentVersion
+        if ($javaVersion -ne '')
+        {
+          $javaPath = [string](Get-ItemProperty -Path "$regKey\$javaVersion" -ErrorAction 'Stop').JavaHome
+        }
+      }
+      catch
+      {
+        #Ignore any errors
+        $javaVersion = ''
+        $javaPath = ''
+      }
+    }
+    
+    # Attempt to find Java in the search path
+    if ($javaPath -eq '')
+    {
+      $javaExe = (Get-Command 'java.exe' -ErrorAction SilentlyContinue)
+      if ($javaExe -ne $null)
+      {
+        $javaCMD = $javaExe.Path
+        $javaPath = Split-Path -Path $javaCMD -Parent
+      }
+    }
+
+    if ($javaPath -eq '') { Write-Host "Unable to determine the path to java.exe"; return $false }
+    if ($javaCMD -eq '') { $javaCMD = "$javaPath\bin\java.exe" }
+    if (-not (Test-Path -Path $javaCMD)) { Write-Error "Could not find java at $javaCMD"; return $false }
+ 
+    return $true
+  }
+}
+function Invoke-InstallPrivateJRE($Destination) {
+  # Adpated from the server-jre8 chocolatey package
+  # https://github.com/rgra/choco-packages/tree/master/server-jre8
+
+  Write-Host "Installing Server JRE $privateJavaVersion to $Destination"
+
+  #8.0.xx to jdk1.8.0_xx
+  $versionArray = $privateJavaVersion.Split(".")
+  $majorVersion = $versionArray[0]
+  $minorVersion = $versionArray[1]
+  $updateVersion = $versionArray[2]
+  $buildNumber = $versionArray[3]
+  $folderVersion = "jdk1.$majorVersion.$($minorVersion)_$updateVersion"
+
+  $fileNameBase = "server-jre-$($majorVersion)u$($updateVersion)-windows-x64"
+  $fileName = "$fileNameBase.tar.gz"
+
+  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/$fileName"
+
+  # Download location info
+  $tempDir = Join-Path -Path $ENV:Temp -ChildPath "choco_jre_$PackageName"
+  $tarGzFile = "$tempDir\$fileName"
+  $tarFile = "$tempDir\$fileNameBase.tar"
+
+  # Cleanup
+  if (Test-Path -Path $tempDir) { Remove-Item -Path $tempDir -Force -Recurse -Confirm:$false | Out-Null }
+
+  New-Item -Path $tempDir -ItemType 'Directory' | Out-Null
+
+  $webClient = New-Object System.Net.WebClient
+  $result = $webClient.headers.Add('Cookie','gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie')
+  Write-Host "Downloading $url ..."
+  $result = $webClient.DownloadFile($url, $tarGzFile)
+  Get-ChecksumValid $tarGzFile $privateJreChecksumMD5 | Out-Null
+
+  #Extract gz to .tar File
+  Get-ChocolateyUnzip $tarGzFile $tempDir | Out-Null
+  #Extract tar to destination
+  Get-ChocolateyUnzip $tarFile $Destination | Out-Null
+
+  # Cleanup
+  if (Test-Path -Path $tempDir) { Remove-Item -Path $tempDir -Force -Recurse -Confirm:$false | Out-Null }
+
+  # return the JAVA_HOME path
+  Write-Output (Get-ChildItem -Path $Destination | Select -First 1).FullName
+}
+# END Helper Functions
+
 
 try {
   # Taken from https://github.com/chocolatey/chocolatey/wiki/How-To-Parse-PackageParameters-Argument
@@ -108,17 +243,7 @@ try {
     }
   }
 
-  if ($RunNeo4jInstall) {
-    # Check if Java is available
-    # This check will not be required once a suitable Java SDK 7 chocolatey package is available in the public feed. This is expected in Feb 2015 sometime.
-    $javaResponse = ''
-    try {
-      Write-Debug 'Testing Java...'
-      & java.exe -version
-    } catch {
-      Throw 'Java is not installed in the PATH.  This is required for a Neo4j installation'
-    }
-    
+  if ($RunNeo4jInstall) {    
     # Install Neo4j
     Install-ChocolateyZipPackage -PackageName $PackageName -URL $downloadUrl -UnzipLocation $InstallDir -CheckSum $md5Checksum -CheckSumType 'md5'
   
@@ -138,6 +263,25 @@ try {
     If ($ImportServiceProperties -ne "") {
       Write-Host "Importing the neo4j-wrapper.conf from  $ImportServiceProperties"
       [void] (Copy-Item -Path $ImportServiceProperties -Destination "$($neoHome)\conf\neo4j-wrapper.conf" -Force -Confirm:$false)
+    }
+
+    # Check if Java is available
+    # This check will not be required once a suitable Java SDK 8 chocolatey package is available in the public feed
+    if (-not (Get-IsJavaInstalled) ) {
+      Write-Host "Java was not detected.  Installing a private JRE for Neo4j"
+      $privatePath = Invoke-InstallPrivateJRE -Destination "$($neoHome)\java"
+      Write-Host "--------------------"
+      Write-Host "Before using Neo4j tools, ensure you have set the JAVA_HOME"
+      Write-Host "environment variable to $($privatePath)"
+      Write-Host ""
+      Write-Host "For example, in a command prompt:"
+      Write-Host "SET JAVA_HOME=$($privatePath)"
+      Write-Host ""
+      Write-Host "For example, in a PowerShell console:"
+      Write-Host "`$ENV:JAVA_HOME = '$($privatePath)'"
+      Write-Host ""
+      Write-Host "--------------------"
+      $ENV:JAVA_HOME = $privatePath
     }
     
     # Install the Neo4j Service

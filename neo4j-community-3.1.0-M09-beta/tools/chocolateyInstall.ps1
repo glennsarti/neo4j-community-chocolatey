@@ -3,6 +3,10 @@ $PackageName = 'neo4j-community'
 $downloadUrl = 'http://neo4j.com/artifact.php?name=neo4j-community-3.1.0-M09-windows.zip'
 $md5Checksum = '096563f42c83dd5dc8776b035d85a838'
 $neozipSubdir = 'neo4j-community-3.1.0-M09'
+# major.minor.update.build
+# Build is always 14
+$privateJavaVersion = "8.0.92.14"
+$privateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
 
 # START Helper Functions
 Function Get-IsJavaInstalled
@@ -79,8 +83,7 @@ Function Get-IsJavaInstalled
       }
     }
 
-    if ($javaVersion -eq '') { Write-Verbose 'Warning: Unable to determine Java version' }
-    if ($javaPath -eq '') { Write-Error "Unable to determine the path to java.exe"; return $false }
+    if ($javaPath -eq '') { Write-Host "Unable to determine the path to java.exe"; return $false }
     if ($javaCMD -eq '') { $javaCMD = "$javaPath\bin\java.exe" }
     if (-not (Test-Path -Path $javaCMD)) { Write-Error "Could not find java at $javaCMD"; return $false }
  
@@ -113,7 +116,54 @@ function Invoke-ModifyConfig($File,$Key,$Value) {
 
   $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($False)
   [IO.File]::WriteAllText($File,$fileContent,$Utf8NoBomEncoding) | Out-NUll
-}  
+}
+
+function Invoke-InstallPrivateJRE($Destination) {
+  # Adpated from the server-jre8 chocolatey package
+  # https://github.com/rgra/choco-packages/tree/master/server-jre8
+
+  Write-Host "Installing Server JRE $privateJavaVersion to $Destination"
+
+  #8.0.xx to jdk1.8.0_xx
+  $versionArray = $privateJavaVersion.Split(".")
+  $majorVersion = $versionArray[0]
+  $minorVersion = $versionArray[1]
+  $updateVersion = $versionArray[2]
+  $buildNumber = $versionArray[3]
+  $folderVersion = "jdk1.$majorVersion.$($minorVersion)_$updateVersion"
+
+  $fileNameBase = "server-jre-$($majorVersion)u$($updateVersion)-windows-x64"
+  $fileName = "$fileNameBase.tar.gz"
+
+  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/$fileName"
+
+  # Download location info
+  $tempDir = Join-Path -Path $ENV:Temp -ChildPath "choco_jre_$PackageName"
+  $tarGzFile = "$tempDir\$fileName"
+  $tarFile = "$tempDir\$fileNameBase.tar"
+
+  # Cleanup
+  if (Test-Path -Path $tempDir) { Remove-Item -Path $tempDir -Force -Recurse -Confirm:$false | Out-Null }
+
+  New-Item -Path $tempDir -ItemType 'Directory' | Out-Null
+
+  $webClient = New-Object System.Net.WebClient
+  $result = $webClient.headers.Add('Cookie','gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie')
+  Write-Host "Downloading $url ..."
+  $result = $webClient.DownloadFile($url, $tarGzFile)
+  Get-ChecksumValid $tarGzFile $privateJreChecksumMD5 | Out-Null
+
+  #Extract gz to .tar File
+  Get-ChocolateyUnzip $tarGzFile $tempDir | Out-Null
+  #Extract tar to destination
+  Get-ChocolateyUnzip $tarFile $Destination | Out-Null
+
+  # Cleanup
+  if (Test-Path -Path $tempDir) { Remove-Item -Path $tempDir -Force -Recurse -Confirm:$false | Out-Null }
+
+  # return the JAVA_HOME path
+  Write-Output (Get-ChildItem -Path $Destination | Select -First 1).FullName
+}
 # END Helper Functions
 
 try {
@@ -217,12 +267,6 @@ try {
     If (!(Test-Path -Path $ImportServiceProperties)) { Throw "Could not find the ServiceProperties file to import. $ImportServiceProperties" }
   }
 
-  # Check if Java is available
-  # This check will not be required once a suitable Java SDK 8 chocolatey package is available in the public feed. This is expected in Feb 2015 sometime.
-  if (-not (Get-IsJavaInstalled) ) {
-    Throw "Could not detect an installation of Java"
-  }
-
   # Install Neo4j
   Install-ChocolateyZipPackage -PackageName $PackageName -URL $downloadUrl -UnzipLocation $InstallDir -CheckSum $md5Checksum -CheckSumType 'md5'
   $neoHome = "$($InstallDir)\$($neozipSubdir)"
@@ -247,6 +291,25 @@ try {
   }
   if ($WindowsServiceName -ne "") {
     Invoke-ModifyConfig -File "$($neoHome)\conf\neo4j-wrapper.conf" -Key "dbms.windows_service_name" -Value $WindowsServiceName | Out-Null
+  }
+
+  # Check if Java is available
+  # This check will not be required once a suitable Java SDK 8 chocolatey package is available in the public feed. This is expected in Feb 2015 sometime.
+  if (-not (Get-IsJavaInstalled) ) {
+    Write-Host "Java was not detected.  Installing a private JRE for Neo4j"
+    $privatePath = Invoke-InstallPrivateJRE -Destination "$($neoHome)\java"
+    Write-Host "--------------------"
+    Write-Host "Before using Neo4j tools, ensure you have set the JAVA_HOME"
+    Write-Host "environment variable to $($privatePath)"
+    Write-Host ""
+    Write-Host "For example, in a command prompt:"
+    Write-Host "SET JAVA_HOME=$($privatePath)"
+    Write-Host ""
+    Write-Host "For example, in a PowerShell console:"
+    Write-Host "`$ENV:JAVA_HOME = '$($privatePath)'"
+    Write-Host ""
+    Write-Host "--------------------"
+    $ENV:JAVA_HOME = $privatePath
   }
 
   # Install the Neo4j Service

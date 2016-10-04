@@ -1,12 +1,13 @@
-$PackageName = 'neo4j-community'
+$PackageName = '{{PackageName}}'
 # Per-package parameters
-$downloadUrl = 'http://neo4j.com/artifact.php?name=neo4j-community-3.0.5-windows.zip'
-$md5Checksum = '9b0cf52efcb7f65242490f26beb530c3'
-$neozipSubdir = 'neo4j-community-3.0.5'
+$downloadUrl = '{{DownloadURL}}'
+$md5Checksum = '{{MD5Checksum}}'
+$neozipSubdir = '{{NeoZipSubdir}}'
+$neoServerApiJarSuffix = '{{NeoServerApiJarSuffix}}'
 # major.minor.update.build
 # Build is always 14
-$privateJavaVersion = "8.0.92.14"
-$privateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+$privateJavaVersion = "{{PrivateJavaVersion}}"
+$privateJreChecksumMD5 = "{{PrivateJreChecksumMD5}}"
 
 # START Helper Functions
 Function Get-IsJavaInstalled
@@ -90,34 +91,6 @@ Function Get-IsJavaInstalled
     return $true
   }
 }
-function Invoke-ModifyConfig($File,$Key,$Value) {
-  Write-Verbose "Setting $($Key)=$($Value) in file $File"
-  $RegexKey = $Key.Replace('.','\.')
-    
-  $fileContent = [IO.File]::ReadAllText($File)
-  
-  $found = $false
-  if ($fileContent -match "(?mi)^$($RegexKey)=") {
-    Write-Verbose "Found $Key"
-    $fileContent = $fileContent -replace "(?mi)^$($RegexKey)=.+$","$($Key)=$($Value)"
-    $found = $true
-  }
-
-  if ($fileContent -match "(?mi)^#$($RegexKey)=") {
-    Write-Verbose "Found $Key in a comment"   
-    $fileContent = $fileContent -replace "(?mi)^#$($RegexKey)=.+$","$($Key)=$($Value)"
-    $found = $true    
-  }
-  
-  if (-not $found) {
-    Write-Verbose "Adding $key"
-    $fileContent += "`n$($Key)=$($Value)"
-  }
-
-  $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($False)
-  [IO.File]::WriteAllText($File,$fileContent,$Utf8NoBomEncoding) | Out-NUll
-}
-
 function Invoke-InstallPrivateJRE($Destination) {
   # Adpated from the server-jre8 chocolatey package
   # https://github.com/rgra/choco-packages/tree/master/server-jre8
@@ -166,6 +139,7 @@ function Invoke-InstallPrivateJRE($Destination) {
 }
 # END Helper Functions
 
+
 try {
   # Taken from https://github.com/chocolatey/chocolatey/wiki/How-To-Parse-PackageParameters-Argument
   $arguments = @{};
@@ -173,22 +147,13 @@ try {
   # Now, we can use the $env:chocolateyPackageParameters inside the Chocolatey package
   $packageParameters = $env:chocolateyPackageParameters;
 
-  # Default the install root
-  try {
-    $InstallDir = Get-ToolsLocation -ErrorAction Stop
-  } catch {
-    # On older chocolatey versions Get-ToolsLocation may not exist as a function.
-    #  Fall back to Get-BinRoot
-    $InstallDir = Get-BinRoot
-  }
   # Default the values
+  $InstallDir = Get-BinRoot
   $InstallDir = Join-Path -Path $InstallDir -ChildPath $PackageName
   $ImportNeoProperties = ""
+  $ImportNeoServerProperties = ""
   $ImportServiceProperties = ""
-  $WindowsServiceName = ""
-  $HTTPEndpoint = ""
-  $HTTPSEndpoint = ""
-    
+  
   # Now, let’s parse the packageParameters using good old regular expression
   if($packageParameters) {
       $MATCH_PATTERN = "\/([a-zA-Z]+):([`"'])?([a-zA-Z0-9- _\\:\.]+)([`"'])?"
@@ -209,123 +174,128 @@ try {
       }
 
       if($arguments.ContainsKey("install")) {
-          Write-Verbose "Install Argument Found";
+          Write-Host "Install Argument Found";
           $InstallDir = $arguments["install"];
       }
 
       if($arguments.ContainsKey("importneoproperties")) {
-          Write-Verbose "ImportNeoProperties Argument Found";
+          Write-Host "ImportNeoProperties Argument Found";
           $ImportNeoProperties = $arguments["importneoproperties"];
       }
 
+      if($arguments.ContainsKey("importneoserverproperties")) {
+          Write-Host "ImportNeoServerProperties Argument Found";
+          $ImportNeoServerProperties = $arguments["importneoserverproperties"];
+      }
+
       if($arguments.ContainsKey("importserviceproperties")) {
-          Write-Verbose "ImportServiceProperties Argument Found";
+          Write-Host "ImportServiceProperties Argument Found";
           $ImportServiceProperties = $arguments["importserviceproperties"];
       }
-
-      if($arguments.ContainsKey("servicename")) {
-          Write-Verbose "ServiceName Argument Found";
-          $WindowsServiceName = $arguments["servicename"];
-      }
-
-      if($arguments.ContainsKey("httpendpoint")) {
-          Write-Verbose "HTTPEndPoint Argument Found";
-          $HTTPEndpoint = $arguments["httpendpoint"];
-      }
-
-      if($arguments.ContainsKey("httpsendpoint")) {
-          Write-Verbose "HTTPSEndpoint Argument Found";
-          $HTTPSEndpoint = $arguments["httpsendpoint"];
-      }
   } else {
-      Write-Verbose "No Package Parameters Passed in";
+      Write-Host "No Package Parameters Passed in";
   }
 
   $silentArgs = "/install:" + $InstallDir
-  if ($WindowsServiceName -ne "") {
-    $silentArgs += " /servicename:" + $WindowsServiceName
-  }
-  if ($HTTPEndpoint -ne "") {
-    $silentArgs += " /httpendpoint:" + $HTTPEndpoint
-  }
-  if ($HTTPSEndpoint -ne "") {
-    $silentArgs += " /httpsendpoint:" + $HTTPSEndpoint
-  }
   if ($ImportNeoProperties -ne "") {
     $silentArgs += " /importneoproperties:" + $ImportNeoProperties
+  }
+  if ($ImportNeoServerProperties -ne "") {
+    $silentArgs += " /importneoserverproperties:" + $ImportNeoServerProperties
   }
   if ($ImportServiceProperties -ne "") {
     $silentArgs += " /importserviceproperties:" + $ImportServiceProperties
   }
-  Write-Verbose "This would be the Chocolatey Silent Arguments: $silentArgs"
+  Write-Debug "This would be the Chocolatey Silent Arguments: $silentArgs"
 
   # Sanity Checks
   If ($ImportNeoProperties -ne "") {
     If (!(Test-Path -Path $ImportNeoProperties)) { Throw "Could not find the NeoProperties file to import. $ImportNeoProperties" }
   }
+  If ($ImportNeoServerProperties -ne "") {
+    If (!(Test-Path -Path $ImportNeoServerProperties)) { Throw "Could not find the NeoServerProperties file to import. $ImportNeoServerProperties" }
+  }
   If ($ImportServiceProperties -ne "") {
     If (!(Test-Path -Path $ImportServiceProperties)) { Throw "Could not find the ServiceProperties file to import. $ImportServiceProperties" }
   }
 
-  # Install Neo4j
-  Install-ChocolateyZipPackage -PackageName $PackageName -URL $downloadUrl -UnzipLocation $InstallDir -CheckSum $md5Checksum -CheckSumType 'md5'
-  $neoHome = "$($InstallDir)\$($neozipSubdir)"
-  Install-ChocolateyEnvironmentVariable "NEO4J_HOME" "$neoHome" "Machine"
-
-  # Import config files if required
-  If ($ImportNeoProperties -ne "") {
-    Write-Verbose "Importing the neo4j.conf from $ImportNeoProperties"
-    [void] (Copy-Item -Path $ImportNeoProperties -Destination "$($neoHome)\conf\neo4j.conf" -Force -Confirm:$false)
+  # Check if Neo is already installed
+  $RunNeo4jInstall = $true
+  $existingNeoHome = [string] (Get-EnvironmentVariable -Name 'NEO4J_HOME' -Scope 'Machine')
+  if ($existingNeoHome -eq '')
+  {
+    $existingNeoHome = [string] ( (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -ErrorAction Continue).'NEO4J_HOME' )
   }
-  If ($ImportServiceProperties -ne "") {
-    Write-Verbose "Importing the neo4j-wrapper.conf from $ImportServiceProperties"
-    [void] (Copy-Item -Path $ImportServiceProperties -Destination "$($neoHome)\conf\neo4j-wrapper.conf" -Force -Confirm:$false)
-  }
+  if ($existingNeoHome -ne '') {
+    Write-Debug 'The NEO4J_HOME environment variable is set.  Checking the version of Neo4j...'
     
-  # Override with package params
-  if ($HTTPEndpoint -ne "") {
-    Invoke-ModifyConfig -File "$($neoHome)\conf\neo4j.conf" -Key "dbms.connector.http.address" -Value $HTTPEndpoint | Out-Null
-  }
-  if ($HTTPSEndpoint -ne "") {
-    Invoke-ModifyConfig -File "$($neoHome)\conf\neo4j.conf" -Key "dbms.connector.https.address" -Value $HTTPSEndpoint | Out-Null
-  }
-  if ($WindowsServiceName -ne "") {
-    Invoke-ModifyConfig -File "$($neoHome)\conf\neo4j-wrapper.conf" -Key "dbms.windows_service_name" -Value $WindowsServiceName | Out-Null
-  }
-
-  # Check if Java is available
-  # This check will not be required once a suitable Java SDK 8 chocolatey package is available in the public feed.
-  if (-not (Get-IsJavaInstalled) ) {
-    Write-Host "Java was not detected.  Installing a private JRE for Neo4j"
-    $privatePath = Invoke-InstallPrivateJRE -Destination "$($neoHome)\java"
-    Write-Host "--------------------"
-    Write-Host "Before using Neo4j tools, ensure you have set the JAVA_HOME"
-    Write-Host "environment variable to $($privatePath)"
-    Write-Host ""
-    Write-Host "For example, in a command prompt:"
-    Write-Host "SET JAVA_HOME=$($privatePath)"
-    Write-Host ""
-    Write-Host "For example, in a PowerShell console:"
-    Write-Host "`$ENV:JAVA_HOME = '$($privatePath)'"
-    Write-Host ""
-    Write-Host "--------------------"
-    $ENV:JAVA_HOME = $privatePath
+    Get-ChildItem -Path (Join-Path -Path $existingNeoHome -ChildPath 'lib') | Where-Object { $_.Name -match 'server-api-.+\.jar' } | ForEach-Object {
+      if ($_.Name.ToLower() -eq "server-api-$($neoServerApiJarSuffix).jar")
+      {
+        $RunNeo4jInstall = $false
+        Write-Host "$PackageName version $neoServerApiJarSuffix is already installed"
+      }
+      else
+      {
+        Write-Debug "$PackageName has been installed but found an unexpected version of the server-api jar file $($_.Name)"
+        Throw "$PackageName is installed but is not the correct version.  Expected version $neoServerApiJarSuffix"
+      }
+    }
   }
 
-  # Install the Neo4j Service
-  $InstallBatch = "$($neoHome)\bin\Neo4j.bat"
-  if (!(Test-Path $InstallBatch)) { throw "Could not find the Neo4j Installer Batch file at $InstallBatch" }
+  if ($RunNeo4jInstall) {    
+    # Install Neo4j
+    Install-ChocolateyZipPackage -PackageName $PackageName -URL $downloadUrl -UnzipLocation $InstallDir -CheckSum $md5Checksum -CheckSumType 'md5'
   
-  Write-Verbose "Installing Neo4j Service..."
-  $args = "install-service"
-  $result = Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow
+    # Set the Home Environment Variable
+    $neoHome = "$($InstallDir)\$($neozipSubdir)"
+    Install-ChocolateyEnvironmentVariable "NEO4J_HOME" "$neoHome" "Machine"
   
-  if ($result.ExitCode -ne 0) { Throw "Neo4j installation returned exit code $($result.ExitCode)"}
-  
-  Write-Verbose "Starting Neo4j Service..."
-  $args = "start"
-  $result = Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow
-  
+    # Import config files if required
+    If ($ImportNeoProperties -ne "") {
+      Write-Host "Importing the neo4jproperties from  $ImportNeoProperties"
+      [void] (Copy-Item -Path $ImportNeoProperties -Destination "$($neoHome)\conf\neo4j.properties" -Force -Confirm:$false)
+    }
+    If ($ImportNeoServerProperties -ne "") {
+      Write-Host "Importing the neo4j-server.properties from  $ImportNeoServerProperties"
+      [void] (Copy-Item -Path $ImportNeoServerProperties -Destination "$($neoHome)\conf\neo4j-server.properties" -Force -Confirm:$false)
+    }
+    If ($ImportServiceProperties -ne "") {
+      Write-Host "Importing the neo4j-wrapper.conf from  $ImportServiceProperties"
+      [void] (Copy-Item -Path $ImportServiceProperties -Destination "$($neoHome)\conf\neo4j-wrapper.conf" -Force -Confirm:$false)
+    }
+
+    # Check if Java is available
+    # This check will not be required once a suitable Java SDK 8 chocolatey package is available in the public feed
+    if (-not (Get-IsJavaInstalled) ) {
+      Write-Host "Java was not detected.  Installing a private JRE for Neo4j"
+      $privatePath = Invoke-InstallPrivateJRE -Destination "$($neoHome)\java"
+      Write-Host "--------------------"
+      Write-Host "Before using Neo4j tools, ensure you have set the JAVA_HOME"
+      Write-Host "environment variable to $($privatePath)"
+      Write-Host ""
+      Write-Host "For example, in a command prompt:"
+      Write-Host "SET JAVA_HOME=$($privatePath)"
+      Write-Host ""
+      Write-Host "For example, in a PowerShell console:"
+      Write-Host "`$ENV:JAVA_HOME = '$($privatePath)'"
+      Write-Host ""
+      Write-Host "--------------------"
+      $ENV:JAVA_HOME = $privatePath
+    }
+    
+    # Install the Neo4j Service
+    $InstallBatch = "$($neoHome)\bin\Neo4jInstaller.bat"
+    if (!(Test-Path $InstallBatch)) { throw "Could not find the Neo4j Installer Batch file at $InstallBatch" }
+    
+    $args = "install"
+    Start-Process -FilePath $InstallBatch -ArgumentList $args -Wait -PassThru -NoNewWindow | Out-Null
+    
+    $neoService = Get-Service -Name "Neo4j-Server" -ErrorAction Continue
+    if ($neoService -eq $null) {
+      Throw "The Neo4j Sever Service failed to install"
+    }
+  }
 } catch {
   throw "$($_.Exception.Message)"
 }
