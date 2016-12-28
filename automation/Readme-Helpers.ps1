@@ -4,17 +4,20 @@ Function Invoke-GenerateReadMe($RootDir) {
 
   # Categorise packages
   Get-ChildItem -Path "$RootDir" |
-    ? { ($_.PSIsContainer) -and ($_.name -like 'neo4j-*') } | % {
-      $dirName = $_.Name
+    Where-Object { ($_.PSIsContainer) -and ($_.name -like 'neo4j-*') } | ForEach-Object {
+      $thisFolder = $_
+      $dirName = $thisFolder.Name
 
       if ($dirName -like "neo4j-community-*") {
-        $pkgVersion = $dirName.replace('neo4j-community-','')
+        $pkgNuspec = (Get-ChildItem -Path ($thisFolder.FullName) -Filter '*.nuspec' | Select-Object -First 1)
+        if ($pkgNuspec -eq $null) { Throw "Directory $dirName does not contain a nuget spec file"}
+        $pkgManifest = [xml](Get-Content -Path $pkgNuspec.Fullname)
+        $pkgVersion = $pkgManifest.package.metadata.version.ToString()
 
-        if ($pkgVersion -like '*-beta') {
-          $pkgVersion = $pkgVersion.replace('-beta','')
-          $neo4jCommunityDevPkgs.Add($pkgVersion,$_.Name)
+        if ($pkgVersion -match '-') {
+          $neo4jCommunityDevPkgs.Add($pkgVersion,$thisFolder.Name)
         } else {
-          $neo4jCommunityPkgs.Add($pkgVersion,$_.Name)
+          $neo4jCommunityPkgs.Add($pkgVersion,$thisFolder.Name)
         }
       }
     }
@@ -22,11 +25,11 @@ Function Invoke-GenerateReadMe($RootDir) {
   # Generate Readme texts
   $PkgListText = ""
   $neo4jCommunityPkgs.Keys | Sort-Object -Descending | % {
-    $PkgListText += "* [Package version $($_)]($($neo4jCommunityPkgs[$_])/)`n"
+    $PkgListText += "* [Package version $($_.ToUpper())]($($neo4jCommunityPkgs[$_])/)`n"
   }
   $DevPkgListText = ""
   $neo4jCommunityDevPkgs.Keys | Sort-Object -Descending | % {
-    $DevPkgListText += "* [Package version $($_)]($($neo4jCommunityDevPkgs[$_])/)`n"
+    $DevPkgListText += "* [Package version $($_.ToUpper())]($($neo4jCommunityDevPkgs[$_])/)`n"
   }
 
   $ReadmeContent = @"

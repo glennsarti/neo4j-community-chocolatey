@@ -4,14 +4,14 @@ Function Get-VersionListFromNeo4j() {
 
   $response = Invoke-WebRequest -URI $neo4jDownloadURL
 
-  $neo4jVersionList = ($response.links | Where { ($_.href -like '*edition=community*') -and ($_.href -like '*download-thanks*') } | % {
+  $neo4jVersionList = ($response.links | Where-Object { ($_.href -like '*edition=community*') -and ($_.href -like '*download-thanks*') } | % {
     $url = $_.href
 
     if ($matches -ne $null) { $matches.Clear() }
-    if ($url -match 'release=([M\d\.\-]+)') {
+    if ($url -match 'release=([a-zA-Z\d\.\-]+)(?:&|$)') {
       Write-Output $matches[1]
     }
-  } | Select -Unique)
+  } | Select-Object -Unique)
 
   if ($neo4jVersionList -eq $null) { throw "Could not detect any versions on Neo4j Website" }
   Write-Output $neo4jVersionList
@@ -20,7 +20,7 @@ Function Get-VersionListFromNeo4j() {
 # Get the version list from this repo
 Function Get-VersionListFromRepo($RootDir) {
   Get-ChildItem -Path "$RootDir\templates" |
-    ? { (!$_.PSIsContainer) -and ($_.name -like 'package-neo4j-community-*') } | % {
+    Where-Object { (!$_.PSIsContainer) -and ($_.name -like 'package-neo4j-community-*') } | % {
       $dirName = $_.Name
 
       Write-Output ($dirName.replace('package-neo4j-community-','').replace('-beta','').replace('.ps1',''))
@@ -37,7 +37,7 @@ Function Invoke-CreateMissingTemplates($RootDir) {
   $repoList = Get-VersionListFromRepo -RootDir $RootDir
 
   # Find new versions
-  $neoList | % {
+  $neoList | ForEach-Object {
     $neoVersion = $_
     if ($repoList -contains $neoVersion) {
       Write-Host "Neo4j v$($neoVersion) is already in this repository"
@@ -78,7 +78,10 @@ Function Invoke-CreateMissingTemplates($RootDir) {
 
       # Beta Version
       if ($neoVersion -notmatch ('^[\d\.]+$')) {
-        $PackageVersion += '-beta'
+        # If the package version doesn't contain white-list text, append `-beta`
+        if ($neoVersion -notmatch ('alpha')) {
+          $PackageVersion += '-beta'
+        }
         $TemplateName += '-beta'
       }
 
