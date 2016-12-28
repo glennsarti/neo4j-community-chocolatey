@@ -32,16 +32,17 @@ Standard Releases
 
 
 Beta Releases
+* [Package version 3.2.0-ALPHA01](neo4j-community-3.2.0-alpha01/)
 * [Package version 3.1.0-M10-BETA](neo4j-community-3.1.0-M10-beta/)
 * [Package version 3.1.0-M09-BETA](neo4j-community-3.1.0-M09-beta/)
 * [Package version 3.1.0-M08-BETA](neo4j-community-3.1.0-M08-beta/)
 * [Package version 3.1.0-M07-BETA](neo4j-community-3.1.0-M07-beta/)
-* [Package version 3.0.0-RC1-BETA](neo4j-community-3.0.0-rc1-beta/)
-* [Package version 2.3.0-M02-BETA](neo4j-community-2.3.0-m02-beta/)
-* [Package version 2.3.0-M01-BETA](neo4j-community-2.3.0-m01-beta/)
-* [Package version 2.2.0-RC01-BETA](neo4j-community-2.2.0-rc01-beta/)
-* [Package version 2.2.0-M04-BETA](neo4j-community-2.2.0-m04-beta/)
-* [Package version 2.2.0-M03-BETA](neo4j-community-2.2.0-m03-beta/)
+* [Package version 3.0.0-RC1-BETA](neo4j-community-3.0.0-RC1-beta/)
+* [Package version 2.3.0-M02-BETA](neo4j-community-2.3.0-M02-beta/)
+* [Package version 2.3.0-M01-BETA](neo4j-community-2.3.0-M01-beta/)
+* [Package version 2.2.0-RC01-BETA](neo4j-community-2.2.0-RC01-beta/)
+* [Package version 2.2.0-M04-BETA](neo4j-community-2.2.0-M04-beta/)
+* [Package version 2.2.0-M03-BETA](neo4j-community-2.2.0-M03-beta/)
 * [Package version 2.2.0-M02-BETA](neo4j-community-2.2.0-M02-beta/)
 
 
