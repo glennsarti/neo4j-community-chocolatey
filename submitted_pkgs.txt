@@ -27,3 +27,4 @@ neo4j-community.2.3.9
 neo4j-community.3.2.0-alpha03
 neo4j-community.3.2.0-alpha04
 neo4j-community.3.2.0-alpha05
+neo4j-community.3.1.2
