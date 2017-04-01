@@ -26,6 +26,7 @@ Standard Releases
 * [Package version 2.3.7](neo4j-community-2.3.7/)
 * [Package version 2.3.6](neo4j-community-2.3.6/)
 * [Package version 2.3.3](neo4j-community-2.3.3/)
+* [Package version 2.3.10](neo4j-community-2.3.10/)
 * [Package version 2.3.0.20151026](neo4j-community-2.3.0/)
 * [Package version 2.2.2.20150617](neo4j-community-2.2.2/)
 * [Package version 2.2.10](neo4j-community-2.2.10/)
