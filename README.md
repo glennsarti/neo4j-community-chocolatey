@@ -38,6 +38,7 @@ Standard Releases
 
 
 Beta Releases
+* [Package version 3.2.0-RC1-BETA](neo4j-community-3.2.0-rc1-beta/)
 * [Package version 3.2.0-ALPHA08](neo4j-community-3.2.0-alpha08/)
 * [Package version 3.2.0-ALPHA07](neo4j-community-3.2.0-alpha07/)
 * [Package version 3.2.0-ALPHA06](neo4j-community-3.2.0-alpha06/)
