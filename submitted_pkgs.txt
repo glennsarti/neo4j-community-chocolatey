@@ -40,3 +40,4 @@ neo4j-community.3.2.0-rc2-beta
 neo4j-community.3.2.0-rc3-beta
 neo4j-community.2.3.11
 neo4j-community.3.1.5
+neo4j-community.3.2.1
