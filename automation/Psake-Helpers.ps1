@@ -45,6 +45,11 @@ Function Invoke-Build($pkgName) {
   }
   Write-Host "Using template $($PackageDefinition.TemplateName)..."
 
+  # Add default PackageDefinition Values
+  if (-not $PackageDefinition.ContainsKey("PrivateJavaURIDir")) {
+    $PackageDefinition.Add("PrivateJavaURIDir","")
+  }
+
   # Create directory for the package
   $pkgDirectory = Join-Path -Path $srcDirectory -ChildPath $pkgName
   if (Test-Path $pkgDirectory) {

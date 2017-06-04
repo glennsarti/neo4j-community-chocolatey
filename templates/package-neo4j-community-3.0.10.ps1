@@ -7,5 +7,6 @@ $PackageDefinition = @{
   "NeoZipSubdir" = "neo4j-community-3.0.10";
   "NeoServerApiJarSuffix" = "3.0.10";
   "PrivateJavaVersion" = "8.0.92.14";
+  "PrivateJavaURIDir" = "d54c1d3a095b4ff2b6607d096fa80163/";
   "PrivateJreChecksumMD5" = "a852c7c6195e2ff8d0f0582d4d12a9b0";
 }

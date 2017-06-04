@@ -6,6 +6,7 @@ $PackageDefinition = @{
   "MD5Checksum" = "510a17d5fdb812b75e94fbb990dc9b12";
   "NeoZipSubdir" = "neo4j-community-3.2.1";
   "NeoServerApiJarSuffix" = "3.2.1";
-  "PrivateJavaVersion" = "8.0.92.14";
-  "PrivateJreChecksumMD5" = "a852c7c6195e2ff8d0f0582d4d12a9b0";
+  "PrivateJavaVersion" = "8.0.131.11";
+  "PrivateJavaURIDir" = "d54c1d3a095b4ff2b6607d096fa80163/";
+  "PrivateJreChecksumMD5" = "9458b62000daac0f48155323185f1c4c";
 }

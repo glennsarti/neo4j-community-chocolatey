@@ -135,7 +135,7 @@ function Invoke-InstallPrivateJRE($Destination) {
   $fileNameBase = "server-jre-$($majorVersion)u$($updateVersion)-windows-x64"
   $fileName = "$fileNameBase.tar.gz"
 
-  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/$fileName"
+  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/d54c1d3a095b4ff2b6607d096fa80163/$fileName"
 
   # Download location info
   $tempDir = Join-Path -Path $ENV:Temp -ChildPath "choco_jre_$PackageName"
