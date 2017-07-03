@@ -60,20 +60,26 @@ Function Invoke-CreateMissingTemplates($RootDir) {
       $PackageVersion = $neoVersion
       $TemplateName = ''
       if ($neoVersion -like '3.*') { $TemplateName = 'neo4j-community-v3.1' }
-      if ($neoVersion -like '2.3.*') { $TemplateName = 'neo4j-community8.1' }
+      if ($neoVersion -like '2.3.*') { $TemplateName = 'neo4j-community8.2' }
       # Disabled 2.2 automatic generation as it is no longer developed
       #if ($neoVersion -like '2.2.*') { $TemplateName = 'neo4j-community' }
       if ($TemplateName -eq '') { Throw "Unable to determine Template Name for Neo4j v$($neoVersion)" }
 
+      $PrivateJavaVersion = ''
+      $PrivateJreChecksumMD5 = ''
+      $PrivateJavaURIDir = ''
+
       # Set Private JRE information
       if ($neoVersion -like '3.*') {
-        $PrivateJavaVersion = "8.0.92.14"
-        $PrivateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+        $PrivateJavaVersion = "8.0.131.11"
+        $PrivateJavaURIDir = "d54c1d3a095b4ff2b6607d096fa80163/"
+        $PrivateJreChecksumMD5 = "9458b62000daac0f48155323185f1c4c"
       }
       if ($neoVersion -like '2.*') {
         # Neo4j 2.x series is not fully supported in Java 8, but Java 7 is no longer available.
-        $PrivateJavaVersion = "8.0.92.14"
-        $PrivateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+        $PrivateJavaVersion = "8.0.131.11"
+        $PrivateJavaURIDir = "d54c1d3a095b4ff2b6607d096fa80163/"
+        $PrivateJreChecksumMD5 = "9458b62000daac0f48155323185f1c4c"
       }
 
       # Beta Version
@@ -95,6 +101,7 @@ Function Invoke-CreateMissingTemplates($RootDir) {
   "NeoZipSubdir" = "neo4j-community-$($neoVersion)";
   "NeoServerApiJarSuffix" = "$($neoVersion)";
   "PrivateJavaVersion" = "$($PrivateJavaVersion)";
+  "PrivateJavaURIDir" = "$($PrivateJavaURIDir)";
   "PrivateJreChecksumMD5" = "$($PrivateJreChecksumMD5)";
 }
 "@

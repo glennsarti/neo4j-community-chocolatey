@@ -5,8 +5,8 @@ $md5Checksum = 'd343a07e189072ed3205cc447cfc95b8'
 $neozipSubdir = 'neo4j-community-3.1.5'
 # major.minor.update.build
 # Build is always 14
-$privateJavaVersion = "8.0.92.14"
-$privateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+$privateJavaVersion = "8.0.131.11"
+$privateJreChecksumMD5 = "9458b62000daac0f48155323185f1c4c"
 
 # START Helper Functions
 Function Get-IsJavaInstalled
@@ -135,7 +135,7 @@ function Invoke-InstallPrivateJRE($Destination) {
   $fileNameBase = "server-jre-$($majorVersion)u$($updateVersion)-windows-x64"
   $fileName = "$fileNameBase.tar.gz"
 
-  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/$fileName"
+  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/d54c1d3a095b4ff2b6607d096fa80163/$fileName"
 
   # Download location info
   $tempDir = Join-Path -Path $ENV:Temp -ChildPath "choco_jre_$PackageName"

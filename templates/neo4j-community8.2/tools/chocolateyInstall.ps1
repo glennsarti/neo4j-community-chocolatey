@@ -1,13 +1,13 @@
-$PackageName = 'neo4j-community'
+$PackageName = '{{PackageName}}'
 # Per-package parameters
-$downloadUrl = 'http://neo4j.com/artifact.php?name=neo4j-community-2.3.11-windows.zip'
-$md5Checksum = 'dea042936da7cf94cf32107c4e7314f5'
-$neozipSubdir = 'neo4j-community-2.3.11'
-$neoServerApiJarSuffix = '2.3.11'
+$downloadUrl = '{{DownloadURL}}'
+$md5Checksum = '{{MD5Checksum}}'
+$neozipSubdir = '{{NeoZipSubdir}}'
+$neoServerApiJarSuffix = '{{NeoServerApiJarSuffix}}'
 # major.minor.update.build
 # Build is always 14
-$privateJavaVersion = "8.0.131.11"
-$privateJreChecksumMD5 = "9458b62000daac0f48155323185f1c4c"
+$privateJavaVersion = "{{PrivateJavaVersion}}"
+$privateJreChecksumMD5 = "{{PrivateJreChecksumMD5}}"
 
 # START Helper Functions
 Function Get-IsJavaInstalled
@@ -108,7 +108,7 @@ function Invoke-InstallPrivateJRE($Destination) {
   $fileNameBase = "server-jre-$($majorVersion)u$($updateVersion)-windows-x64"
   $fileName = "$fileNameBase.tar.gz"
 
-  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/d54c1d3a095b4ff2b6607d096fa80163/$fileName"
+  $url = "http://download.oracle.com/otn-pub/java/jdk/$($majorVersion)u$($updateVersion)-b$buildNumber/{{PrivateJavaURIDir}}$fileName"
 
   # Download location info
   $tempDir = Join-Path -Path $ENV:Temp -ChildPath "choco_jre_$PackageName"
