@@ -5,8 +5,8 @@ $md5Checksum = 'fe75d40cf657547ad255b9f479ab68f6'
 $neozipSubdir = 'neo4j-community-3.0.10'
 # major.minor.update.build
 # Build is always 14
-$privateJavaVersion = "8.0.92.14"
-$privateJreChecksumMD5 = "a852c7c6195e2ff8d0f0582d4d12a9b0"
+$privateJavaVersion = "8.0.131.11"
+$privateJreChecksumMD5 = "9458b62000daac0f48155323185f1c4c"
 
 # START Helper Functions
 Function Get-IsJavaInstalled
