@@ -2,7 +2,7 @@
 Function Get-VersionListFromNeo4j() {
   $neo4jDownloadURL = 'https://neo4j.com/download/other-releases/'
 
-  $response = Invoke-WebRequest -URI $neo4jDownloadURL
+  $response = Invoke-WebRequest -URI $neo4jDownloadURL -UseBasicParsing
 
   $neo4jVersionList = ($response.links | Where-Object { ($_.href -like '*edition=community*') -and ($_.href -like '*download-thanks*') } | % {
     $url = $_.href
