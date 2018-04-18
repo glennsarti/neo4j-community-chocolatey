@@ -70,3 +70,4 @@ neo4j-community.3.4.0-alpha10
 neo4j-community.2.3.12
 neo4j-community.3.4.0-beta01-beta
 neo4j-community.3.3.5
+neo4j-community.3.4.0-beta02-beta
