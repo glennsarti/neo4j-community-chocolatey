@@ -11,6 +11,7 @@ This package installs the Neo4j Server Community Edition
 Standard Releases
 * [Package version 3.4.1](neo4j-community-3.4.1/)
 * [Package version 3.4.0](neo4j-community-3.4.0/)
+* [Package version 3.3.6](neo4j-community-3.3.6/)
 * [Package version 3.3.5](neo4j-community-3.3.5/)
 * [Package version 3.3.4](neo4j-community-3.3.4/)
 * [Package version 3.3.3](neo4j-community-3.3.3/)
