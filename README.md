@@ -9,6 +9,7 @@ This package installs the Neo4j Server Community Edition
 [Chocolatey Package](https://chocolatey.org/packages/neo4j-community)
 
 Standard Releases
+* [Package version 3.4.5](neo4j-community-3.4.5/)
 * [Package version 3.4.4](neo4j-community-3.4.4/)
 * [Package version 3.4.3](neo4j-community-3.4.3/)
 * [Package version 3.4.1](neo4j-community-3.4.1/)
