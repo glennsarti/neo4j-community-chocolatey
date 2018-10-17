@@ -87,3 +87,4 @@ neo4j-community.3.5.0-alpha09
 neo4j-community.3.5.0-beta01-beta
 neo4j-community.3.4.8
 neo4j-community.3.4.9
+neo4j-community.3.2.13
